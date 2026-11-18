@@ -1,9 +1,9 @@
-DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>수도권 아파트 시장 주간 대시보드</title>
+    <title>주간 수도권 아파트 시장</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js CDN -->
@@ -23,25 +23,25 @@ DOCTYPE html>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col sm:flex-row justify-between items-center gap-3">
             <div class="flex items-center space-x-3">
                 <div class="bg-blue-600 p-2 rounded-xl text-white font-bold text-xl shadow-inner">
-                    <i class="fa-solid fa-city"></i>
+                    <i class="fa-solid fa-building"></i>
                 </div>
                 <div>
-                    <h1 class="text-lg sm:text-xl font-bold tracking-tight">수도권 아파트 시장 주간 대시보드</h1>
-                    <p class="text-xs text-slate-400">주간 브리핑 (기준: 2026년 11월)</p>
+                    <h1 class="text-lg sm:text-xl font-bold tracking-tight">주간 수도권 아파트 시장</h1>
+                    <p class="text-xs text-slate-400">주간 주택시장 브리핑 (기준: 2026년 11월)</p>
                 </div>
             </div>
             <!-- Quick Actions & Status -->
             <div class="flex items-center space-x-3">
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
                     <span class="w-2 h-2 mr-1.5 bg-emerald-400 rounded-full animate-pulse"></span>
-                    실시간 연동 완료
+                    실시간 데이터 연동
                 </span>
                 <button onclick="openExportModal()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs sm:text-sm px-3.5 py-2 rounded-lg font-medium transition shadow-sm flex items-center gap-1.5">
                     <i class="fa-solid fa-download"></i> 리포트 내보내기
                 </button>
             </div>
         </div>
-        <!-- Tab Navigation Bar (Reduced to 3 Tabs) -->
+        <!-- Tab Navigation Bar (3 Clean Tabs) -->
         <div class="bg-slate-800/90 border-t border-slate-700">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-1 sm:space-x-4 overflow-x-auto no-scrollbar">
                 <button onclick="switchTab('metrics')" id="tab-btn-metrics" class="tab-btn py-3 px-4 text-xs sm:text-sm font-semibold border-b-2 border-blue-500 text-white flex items-center gap-2 whitespace-nowrap transition">
@@ -66,13 +66,13 @@ DOCTYPE html>
             <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div class="flex items-center space-x-2 w-full sm:w-auto">
                     <i class="fa-solid fa-filter text-slate-400"></i>
-                    <span class="text-sm font-medium text-slate-700">영역별 필터:</span>
+                    <span class="text-sm font-medium text-slate-700">부문별 필터:</span>
                     <select id="metric-filter" onchange="filterMetrics()" class="bg-slate-50 border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2">
                         <option value="all">전체 보기 (8선)</option>
-                        <option value="residential">주거용 부동산</option>
-                        <option value="pf">부동산 PF & 금융</option>
-                        <option value="commercial">상업용 & 리츠</option>
-                        <option value="land">토지 보상 & 인허가</option>
+                        <option value="price">매매가격 및 변동률</option>
+                        <option value="supply">거래량 및 매물·입주</option>
+                        <option value="finance">금융 및 주택담보대출</option>
+                        <option value="policy">인허가 및 공급지표</option>
                     </select>
                 </div>
                 <div class="text-xs text-slate-500 flex items-center gap-2">
@@ -83,10 +83,10 @@ DOCTYPE html>
             <!-- Metrics Grid -->
             <div id="metrics-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <!-- Card 1 -->
-                <div onclick="openMetricDetail(1)" data-category="residential" class="metric-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-300 transition cursor-pointer flex flex-col justify-between">
+                <div onclick="openMetricDetail(1)" data-category="price" class="metric-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-300 transition cursor-pointer flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-start mb-3">
-                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 bg-blue-50 text-blue-600 rounded-md">주거용</span>
+                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 bg-blue-50 text-blue-600 rounded-md">매매가격</span>
                             <span class="text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-1 rounded">상승폭 축소</span>
                         </div>
                         <h3 class="font-bold text-slate-800 text-base mb-1">수도권 아파트 매매가격 변동률</h3>
@@ -99,10 +99,10 @@ DOCTYPE html>
                 </div>
 
                 <!-- Card 2 -->
-                <div onclick="openMetricDetail(2)" data-category="residential" class="metric-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-300 transition cursor-pointer flex flex-col justify-between">
+                <div onclick="openMetricDetail(2)" data-category="supply" class="metric-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-300 transition cursor-pointer flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-start mb-3">
-                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 bg-blue-50 text-blue-600 rounded-md">주거용</span>
+                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 bg-indigo-50 text-indigo-600 rounded-md">거래량</span>
                             <span class="text-xs font-semibold text-red-600 bg-red-50 px-2 py-1 rounded">감소세 지속</span>
                         </div>
                         <h3 class="font-bold text-slate-800 text-base mb-1">서울 아파트 매매거래량</h3>
@@ -115,10 +115,10 @@ DOCTYPE html>
                 </div>
 
                 <!-- Card 3 -->
-                <div onclick="openMetricDetail(3)" data-category="residential" class="metric-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-300 transition cursor-pointer flex flex-col justify-between">
+                <div onclick="openMetricDetail(3)" data-category="supply" class="metric-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-300 transition cursor-pointer flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-start mb-3">
-                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 bg-blue-50 text-blue-600 rounded-md">주거용</span>
+                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 bg-indigo-50 text-indigo-600 rounded-md">매물</span>
                             <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded">매물 급증</span>
                         </div>
                         <h3 class="font-bold text-slate-800 text-base mb-1">수도권 아파트 매물 건수</h3>
@@ -131,10 +131,10 @@ DOCTYPE html>
                 </div>
 
                 <!-- Card 4 -->
-                <div onclick="openMetricDetail(4)" data-category="residential" class="metric-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-300 transition cursor-pointer flex flex-col justify-between">
+                <div onclick="openMetricDetail(4)" data-category="supply" class="metric-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-300 transition cursor-pointer flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-start mb-3">
-                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 bg-blue-50 text-blue-600 rounded-md">주거용</span>
+                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 bg-indigo-50 text-indigo-600 rounded-md">입주물량</span>
                             <span class="text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-1 rounded">공급 압력</span>
                         </div>
                         <h3 class="font-bold text-slate-800 text-base mb-1">수도권 입주 예정 물량</h3>
@@ -147,65 +147,65 @@ DOCTYPE html>
                 </div>
 
                 <!-- Card 5 -->
-                <div onclick="openMetricDetail(5)" data-category="pf" class="metric-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-300 transition cursor-pointer flex flex-col justify-between">
+                <div onclick="openMetricDetail(5)" data-category="finance" class="metric-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-300 transition cursor-pointer flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-start mb-3">
-                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 bg-purple-50 text-purple-600 rounded-md">PF & 금융</span>
-                            <span class="text-xs font-semibold text-purple-600 bg-purple-50 px-2 py-1 rounded">관리 국면</span>
+                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 bg-purple-50 text-purple-600 rounded-md">금융·대출</span>
+                            <span class="text-xs font-semibold text-purple-600 bg-purple-50 px-2 py-1 rounded">안정세</span>
                         </div>
-                        <h3 class="font-bold text-slate-800 text-base mb-1">금융권 부동산 PF 연체율</h3>
-                        <p class="text-2xl font-extrabold text-purple-600 my-2">3.88% ~ 4.56%</p>
+                        <h3 class="font-bold text-slate-800 text-base mb-1">주택담보대출 금리 동향</h3>
+                        <p class="text-2xl font-extrabold text-purple-600 my-2">연 3.8% ~ 4.4%</p>
                     </div>
                     <div class="text-xs text-slate-500 pt-3 border-t border-slate-100 flex items-center justify-between">
-                        <span>업권별 차별화 심화</span>
+                        <span>시중은행 혼합형 기준</span>
                         <i class="fa-solid fa-arrow-right text-blue-500"></i>
                     </div>
                 </div>
 
                 <!-- Card 6 -->
-                <div onclick="openMetricDetail(6)" data-category="pf" class="metric-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-300 transition cursor-pointer flex flex-col justify-between">
+                <div onclick="openMetricDetail(6)" data-category="finance" class="metric-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-300 transition cursor-pointer flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-start mb-3">
-                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 bg-purple-50 text-purple-600 rounded-md">PF & 금융</span>
-                            <span class="text-xs font-semibold text-red-600 bg-red-50 px-2 py-1 rounded">양극화 심화</span>
+                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 bg-purple-50 text-purple-600 rounded-md">금융·대출</span>
+                            <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded">가계부채 관리</span>
                         </div>
-                        <h3 class="font-bold text-slate-800 text-base mb-1">지방 미분양 및 PF 위험</h3>
-                        <p class="text-xl font-extrabold text-red-600 my-2">비수도권 적체 지속</p>
+                        <h3 class="font-bold text-slate-800 text-base mb-1">가계 주택대출 증가 속도</h3>
+                        <p class="text-xl font-extrabold text-slate-900 my-2">전월 대비 완화</p>
                     </div>
                     <div class="text-xs text-slate-500 pt-3 border-t border-slate-100 flex items-center justify-between">
-                        <span>시행사 유동성 압박</span>
+                        <span>스트레스 DSR 2단계 적용</span>
                         <i class="fa-solid fa-arrow-right text-blue-500"></i>
                     </div>
                 </div>
 
                 <!-- Card 7 -->
-                <div onclick="openMetricDetail(7)" data-category="commercial" class="metric-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-300 transition cursor-pointer flex flex-col justify-between">
+                <div onclick="openMetricDetail(7)" data-category="policy" class="metric-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-300 transition cursor-pointer flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-start mb-3">
-                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 bg-emerald-50 text-emerald-600 rounded-md">상업 & 리츠</span>
-                            <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">박스권 횡보</span>
+                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 bg-emerald-50 text-emerald-600 rounded-md">전월세</span>
+                            <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">상승세 지속</span>
                         </div>
-                        <h3 class="font-bold text-slate-800 text-base mb-1">K-REITs 성과</h3>
-                        <p class="text-xl font-extrabold text-slate-900 my-2">선별적 등락세</p>
+                        <h3 class="font-bold text-slate-800 text-base mb-1">수도권 아파트 전세가격 변동률</h3>
+                        <p class="text-xl font-extrabold text-emerald-600 my-2">+0.4% <span class="text-xs font-normal text-slate-500">안정적 우상향</span></p>
                     </div>
                     <div class="text-xs text-slate-500 pt-3 border-t border-slate-100 flex items-center justify-between">
-                        <span>금리 연동 자금 유입 대기</span>
+                        <span>역세권 선호 현상 뚜렷</span>
                         <i class="fa-solid fa-arrow-right text-blue-500"></i>
                     </div>
                 </div>
 
                 <!-- Card 8 -->
-                <div onclick="openMetricDetail(8)" data-category="land" class="metric-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-300 transition cursor-pointer flex flex-col justify-between">
+                <div onclick="openMetricDetail(8)" data-category="policy" class="metric-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-300 transition cursor-pointer flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-start mb-3">
-                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 bg-amber-50 text-amber-600 rounded-md">토지 & 인허가</span>
-                            <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">신속 추진</span>
+                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 bg-amber-50 text-amber-600 rounded-md">인허가</span>
+                            <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">공급 회복</span>
                         </div>
-                        <h3 class="font-bold text-slate-800 text-base mb-1">토지 보상 및 착공 지표</h3>
-                        <p class="text-2xl font-extrabold text-emerald-600 my-2">이주율 91%</p>
+                        <h3 class="font-bold text-slate-800 text-base mb-1">수도권 주택 인허가 및 착공</h3>
+                        <p class="text-2xl font-extrabold text-emerald-600 my-2">전년비 +33% 증가</p>
                     </div>
                     <div class="text-xs text-slate-500 pt-3 border-t border-slate-100 flex items-center justify-between">
-                        <span>철거율 70% 도달</span>
+                        <span>주택 공급 지표 반등세</span>
                         <i class="fa-solid fa-arrow-right text-blue-500"></i>
                     </div>
                 </div>
@@ -217,7 +217,7 @@ DOCTYPE html>
             <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center">
                 <div>
                     <h2 class="text-lg font-bold text-slate-800">핵심 시장 데이터 시각화 (8선)</h2>
-                    <p class="text-xs text-slate-500">수도권 아파트 시장 타당성 검토 및 분양성 예측을 위한 시계열 데이터 분석</p>
+                    <p class="text-xs text-slate-500">수도권 아파트 시장 흐름 파악을 위한 주요 시계열 데이터 분석</p>
                 </div>
                 <button onclick="resetCharts()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-3 py-1.5 rounded-lg font-medium transition">
                     <i class="fa-solid fa-rotate-right mr-1"></i> 차트 새로고침
@@ -260,24 +260,24 @@ DOCTYPE html>
                 </div>
                 <!-- Chart 5 -->
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col">
-                    <h3 class="text-sm font-bold text-slate-800 mb-1">5. 금융권 업권별 PF 연체율 비교</h3>
-                    <p class="text-xs text-slate-500 mb-4">증권·2금융권 vs 은행권 리스크 괴리</p>
+                    <h3 class="text-sm font-bold text-slate-800 mb-1">5. 주택담보대출 금리 추이 (혼합형)</h3>
+                    <p class="text-xs text-slate-500 mb-4">시중금리 하향 안정세 반영</p>
                     <div class="relative flex-1 h-64">
                         <canvas id="chart5"></canvas>
                     </div>
                 </div>
                 <!-- Chart 6 -->
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col">
-                    <h3 class="text-sm font-bold text-slate-800 mb-1">6. 지방 vs 수도권 PF 대출잔액 & 연체</h3>
-                    <p class="text-xs text-slate-500 mb-4">비수도권 준공 후 미분양 누적 여파</p>
+                    <h3 class="text-sm font-bold text-slate-800 mb-1">6. 서울 vs 경기·인천 아파트 매매가 비교</h3>
+                    <p class="text-xs text-slate-500 mb-4">권역별 가격 격차 및 추이</p>
                     <div class="relative flex-1 h-64">
                         <canvas id="chart6"></canvas>
                     </div>
                 </div>
                 <!-- Chart 7 -->
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col">
-                    <h3 class="text-sm font-bold text-slate-800 mb-1">7. 공공택지 이주율 및 철거율 진척도</h3>
-                    <p class="text-xs text-slate-500 mb-4">3기 신도시 선행지구 본착공 전환율</p>
+                    <h3 class="text-sm font-bold text-slate-800 mb-1">7. 수도권 아파트 전세가율 변화</h3>
+                    <p class="text-xs text-slate-500 mb-4">실수요 중심 전세 수요 증가에 따른 반등</p>
                     <div class="relative flex-1 h-64">
                         <canvas id="chart7"></canvas>
                     </div>
@@ -285,7 +285,7 @@ DOCTYPE html>
                 <!-- Chart 8 -->
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col">
                     <h3 class="text-sm font-bold text-slate-800 mb-1">8. 주택 인허가 및 착공 물량 회복세</h3>
-                    <p class="text-xs text-slate-500 mb-4">서울 아파트 인허가 1.5배 확대 시그널</p>
+                    <p class="text-xs text-slate-500 mb-4">수도권 주택 인허가 지수 확대 시그널</p>
                     <div class="relative flex-1 h-64">
                         <canvas id="chart8"></canvas>
                     </div>
@@ -297,7 +297,7 @@ DOCTYPE html>
         <section id="tab-news" class="tab-content hidden space-y-6">
             <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
                 <h2 class="text-lg font-bold text-slate-800">분야별 핵심 뉴스 브리핑 & 오늘의 해석</h2>
-                <p class="text-xs text-slate-500">시장의 구조적 변화 배경과 언론 보도 원문 요약</p>
+                <p class="text-xs text-slate-500">수도권 주택시장의 구조적 변화 배경과 언론 보도 원문 요약</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -306,16 +306,16 @@ DOCTYPE html>
                     <!-- News Item 1 -->
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:border-blue-300 transition">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-bold px-2.5 py-1 bg-blue-50 text-blue-600 rounded-md">주거·상업용 부동산</span>
+                            <span class="text-xs font-bold px-2.5 py-1 bg-blue-50 text-blue-600 rounded-md">주거용 부동산 시장</span>
                             <span class="text-xs text-slate-400">국민일보 / 뉴스1</span>
                         </div>
                         <h3 class="text-base font-bold text-slate-900 mb-2">서울 매물 증가 속 공급 기반 확대, 수도권 입주 물량 대기</h3>
                         <p class="text-sm text-slate-600 mb-4 leading-relaxed">
-                            서울 주택시장은 가격 상승세가 둔화되고 매물이 8만 건을 돌파하는 등 안정화 지표가 확산되는 한편, 인허가(전년 동기 대비 +33%)와 착공(+36%)이 늘어 공급 기반이 확대되고 있습니다. 특히 내년 1분기까지 수도권에 4만 호 이상의 입주가 예정되어 있어 단기적으로 전세 및 분양 시장의 가격 경쟁력이 중요한 변수로 작용할 전망입니다.
+                            서울 주택시장은 가격 상승세가 둔화되고 매물이 8만 건을 돌파하는 등 안정화 지표가 확산되는 한편, 인허가(전년 동기 대비 +33%)와 착공(+36%)이 늘어 공급 기반이 확대되고 있습니다. 특히 내년 1분기까지 수도권에 4만 호 이상의 입주가 예정되어 있어 단기적으로 전세 및 매매 시장의 가격 경쟁력이 중요한 변수로 작용할 전망입니다.
                         </p>
                         <div class="flex items-center justify-between pt-3 border-t border-slate-100 text-xs">
-                            <span class="text-slate-500 font-medium">키워드: 인허가증가, 입주물량스파이크, 분양가경쟁</span>
-                            <button onclick="openNewsModal('주거·상업용 부동산 리포트 전문')" class="text-blue-600 hover:underline font-semibold flex items-center gap-1">
+                            <span class="text-slate-500 font-medium">키워드: 인허가증가, 입주물량스파이크, 가격경쟁</span>
+                            <button onclick="openNewsModal('주거용 부동산 시장 리포트 전문')" class="text-blue-600 hover:underline font-semibold flex items-center gap-1">
                                 원문 및 상세 보기 <i class="fa-solid fa-arrow-right"></i>
                             </button>
                         </div>
@@ -324,16 +324,16 @@ DOCTYPE html>
                     <!-- News Item 2 -->
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:border-blue-300 transition">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-bold px-2.5 py-1 bg-purple-50 text-purple-600 rounded-md">부동산 PF 및 금융</span>
+                            <span class="text-xs font-bold px-2.5 py-1 bg-purple-50 text-purple-600 rounded-md">가계 금융 및 대출</span>
                             <span class="text-xs text-slate-400">금융위원회 / 연합인포맥스</span>
                         </div>
-                        <h3 class="text-base font-bold text-slate-900 mb-2">PF 연착륙 및 건전성 관리 속 틈새 규제 완화 추진</h3>
+                        <h3 class="text-base font-bold text-slate-900 mb-2">스트레스 DSR 2단계 적용 속 주택대출 증가세 안정화</h3>
                         <p class="text-sm text-slate-600 mb-4 leading-relaxed">
-                            금융당국과 채권 금융기관의 지속적인 부실 사업장 정비(경공매·재구조화)로 PF 연체율이 3%대 후반에서 관리되고 있으나, 증권사 및 비주거·지방 사업장의 위험 노출은 여전히 경계 대상입니다. 한편 정부는 8.13 주택 신속공급 대책의 일환으로 PF·건설사 금융애로 해소센터를 운영하며 기숙사·고시원 등 비주택 시설의 PF 보증 대상을 확대하는 등 제도를 손질하고 있습니다.
+                            금융당국과 시중은행의 가계부채 관리 강화 기조에 따라 주택담보대출 증가 속도가 안정세를 보이고 있습니다. 금리 인하 기대감과 맞물려 실수요자들은 매수 타이밍을 저울질하고 있으며, 은행권 혼합형 금리는 연 3%대 후반에서 형성되어 차주들의 이자 부담 완화 여부에 관심이 모아지고 있습니다.
                         </p>
                         <div class="flex items-center justify-between pt-3 border-t border-slate-100 text-xs">
-                            <span class="text-slate-500 font-medium">키워드: PF연체율관리, 브리지론, HUG보증확대</span>
-                            <button onclick="openNewsModal('부동산 PF 금융 리포트 전문')" class="text-blue-600 hover:underline font-semibold flex items-center gap-1">
+                            <span class="text-slate-500 font-medium">키워드: 스트레스DSR, 주택대출, 금리안정세</span>
+                            <button onclick="openNewsModal('가계 금융 및 대출 리포트 전문')" class="text-blue-600 hover:underline font-semibold flex items-center gap-1">
                                 원문 및 상세 보기 <i class="fa-solid fa-arrow-right"></i>
                             </button>
                         </div>
@@ -342,16 +342,16 @@ DOCTYPE html>
                     <!-- News Item 3 -->
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:border-blue-300 transition">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-bold px-2.5 py-1 bg-amber-50 text-amber-600 rounded-md">도시개발 및 토지보상</span>
-                            <span class="text-xs text-slate-400">국토교통부 / 한국토지주택공사</span>
+                            <span class="text-xs font-bold px-2.5 py-1 bg-emerald-50 text-emerald-600 rounded-md">전월세 및 주거 공급</span>
+                            <span class="text-xs text-slate-400">국토교통부 / 한국부동산원</span>
                         </div>
-                        <h3 class="text-base font-bold text-slate-900 mb-2">공공택지 최단기 착공 모델 및 국공유지 무상귀속 협의체 가동</h3>
+                        <h3 class="text-base font-bold text-slate-900 mb-2">수도권 역세권 전세가격 상승세, 실수요 중심 임대차 시장 재편</h3>
                         <p class="text-sm text-slate-600 mb-4 leading-relaxed">
-                            정부는 3기 신도시 선행지구를 중심으로 토지 보상 및 이주율(91%)을 끌어올리고 있으며, 후발지구인 광명시흥 등에도 보상비를 추가 투입하여 사업 기간을 단축하고 있습니다. 또한 조달청 등과 연계한 국공유지 무상귀속 협의체를 시범 운영하여 도시개발 및 공공택지 시행 과정의 행정 병목을 줄이는 데 주력하고 있습니다.
+                            수도권 아파트 전세시장은 교통 호재가 집중된 역세권 및 신축 단지를 중심으로 상승세가 이어지고 있습니다. 매매 시장 관망세가 짙어지면서 전세 수요가 꾸준히 유입되는 양상이며, 향후 입주 물량 증가 지역의 수급 변화에 따라 국지적 전세가 변동성이 나타날 것으로 예상됩니다.
                         </p>
                         <div class="flex items-center justify-between pt-3 border-t border-slate-100 text-xs">
-                            <span class="text-slate-500 font-medium">키워드: 3기신도시, 토지이주율91%, 무상귀속</span>
-                            <button onclick="openNewsModal('도시개발 및 토지보상 리포트 전문')" class="text-blue-600 hover:underline font-semibold flex items-center gap-1">
+                            <span class="text-slate-500 font-medium">키워드: 역세권전세, 임대차시장, 실수요유입</span>
+                            <button onclick="openNewsModal('전월세 및 주거 공급 리포트 전문')" class="text-blue-600 hover:underline font-semibold flex items-center gap-1">
                                 원문 및 상세 보기 <i class="fa-solid fa-arrow-right"></i>
                             </button>
                         </div>
@@ -365,18 +365,18 @@ DOCTYPE html>
                             <i class="fa-solid fa-bolt-lightning text-lg"></i>
                             <h3 class="font-bold text-base uppercase tracking-wider">오늘의 해석</h3>
                         </div>
-                        <h4 class="font-bold text-lg mb-3 leading-snug">"공급 과잉 시그널 속 맞춤형 분양 전략 필요"</h4>
+                        <h4 class="font-bold text-lg mb-3 leading-snug">"매물 증가와 입주 스파이크 속 가격 민감도 극대화 국면"</h4>
                         <p class="text-slate-300 text-sm leading-relaxed mb-4">
-                            수도권 입주 스파이크와 서울 매물 8만 건 돌파는 단순한 경기 침체가 아니라 <b>'가격 민감도 극대화 국면'</b>을 의미합니다. 시장 참여자는 일률적인 분양가 책정에서 벗어나 인근 지역의 입주 시기와 물량 공백기를 정교하게 교차 분석해야 합니다.
+                            수도권 매물이 8만 건을 돌파하고 내년 1분기까지 입주 물량이 집중되면서 시장은 전형적인 <b>'매수자 우위 및 관망세'</b>를 보이고 있습니다. 실수요자들은 입지별·단지별 가격 적정성을 꼼꼼히 따져보는 핀포인트 접근이 필요합니다.
                         </p>
                         <div class="bg-white/10 p-4 rounded-xl border border-white/10 text-xs text-slate-200 space-y-2">
                             <div class="flex items-center gap-2">
                                 <i class="fa-solid fa-check text-emerald-400"></i>
-                                <span>브리지론 금리 하방 압력 대비 자금 스케줄 재조정</span>
+                                <span>금리 안정화 추이에 따른 대출 상환 계획 점검</span>
                             </div>
                             <div class="flex items-center gap-2">
                                 <i class="fa-solid fa-check text-emerald-400"></i>
-                                <span>국공유지 무상귀속 신속 협의로 금융비용 방어</span>
+                                <span>인근 지역 입주 물량 공백기 및 시세 비교 필수</span>
                             </div>
                         </div>
                     </div>
@@ -388,7 +388,7 @@ DOCTYPE html>
 
     <!-- Footer -->
     <footer class="bg-slate-800 text-slate-400 py-4 text-xs text-center border-t border-slate-700">
-        <p>&copy; 2026 수도권 아파트 시장 주간 대시보드. All rights reserved. | Executive Briefing System</p>
+        <p>&copy; 2026 주간 수도권 아파트 시장. All rights reserved. | Weekly Market Briefing System</p>
     </footer>
 
     <!-- Metric Detail Modal -->
@@ -408,7 +408,7 @@ DOCTYPE html>
                 <p id="modal-value" class="text-2xl font-extrabold text-blue-600">-</p>
             </div>
             <div>
-                <h4 class="text-sm font-bold text-slate-800 mb-1">시장 실무 시사점</h4>
+                <h4 class="text-sm font-bold text-slate-800 mb-1">시장 시사점</h4>
                 <p id="modal-implication" class="text-sm text-slate-600 leading-relaxed">-</p>
             </div>
             <div class="pt-4 border-t border-slate-100 flex justify-end">
@@ -433,7 +433,7 @@ DOCTYPE html>
             </div>
             <div class="text-sm text-slate-600 leading-relaxed space-y-2">
                 <p>본 브리핑은 국토교통부, 한국부동산원, 금융위원회 및 민간 시장 데이터(2026년 11월 기준)를 바탕으로 작성되었습니다.</p>
-                <p class="font-medium text-slate-800">• 주요 데이터 검증 완료 및 시행사 사업계획서 대입 시뮬레이션 지원</p>
+                <p class="font-medium text-slate-800">• 수도권 아파트 시장 주요 지표 및 실거래가 동향 검증 완료</p>
             </div>
             <div class="pt-4 border-t border-slate-100 flex justify-end">
                 <button onclick="closeNewsModal()" class="bg-slate-900 text-white text-sm px-4 py-2 rounded-lg font-medium hover:bg-slate-800 transition">
@@ -449,7 +449,7 @@ DOCTYPE html>
             <div class="flex justify-between items-start">
                 <div>
                     <h3 class="text-lg font-bold text-slate-900">주간 리포트 내보내기</h3>
-                    <p class="text-xs text-slate-500">임원 보고용 포맷을 선택하세요.</p>
+                    <p class="text-xs text-slate-500">보고용 다운로드 포맷을 선택하세요.</p>
                 </div>
                 <button onclick="closeExportModal()" class="text-slate-400 hover:text-slate-600 p-1">
                     <i class="fa-solid fa-xmark text-xl"></i>
@@ -457,7 +457,7 @@ DOCTYPE html>
             </div>
             <div class="space-y-2">
                 <button onclick="alertAction('PDF 리포트 생성이 완료되었습니다.')" class="w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50 transition flex items-center justify-between">
-                    <span class="text-sm font-semibold text-slate-800"><i class="fa-solid fa-file-pdf text-red-500 mr-2"></i> PDF Executive Briefing (임원용 요약)</span>
+                    <span class="text-sm font-semibold text-slate-800"><i class="fa-solid fa-file-pdf text-red-500 mr-2"></i> PDF 주간 시장 브리핑 요약</span>
                     <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
                 </button>
                 <button onclick="alertAction('Excel 데이터 다운로드가 시작되었습니다.')" class="w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50 transition flex items-center justify-between">
@@ -510,14 +510,14 @@ DOCTYPE html>
 
         // Metric Modal Details Data
         const metricData = {
-            1: { title: "수도권 아파트 매매가격 변동률", category: "주거용 부동산", value: "상승세 둔화 (서울 +0.7% 내외)", implication: "강남 3구 및 일부 상급지 중심의 과열이 진정되며 관망세로 전환. 분양가 책정 시 주변 시세 대비 보수적인 산정이 요구됨." },
-            2: { title: "서울 아파트 매매거래량", category: "주거용 부동산", value: "월 약 3,900건 수준", implication: "평년(4,100건)을 밑도는 거래 회전율. 실수요자들의 매수 타이밍 지연으로 초기 분양률 제고 마케팅 필수." },
-            3: { title: "수도권 아파트 매물 건수", category: "주거용 부동산", value: "서울 매물 8만 건 돌파 (+40%)", implication: "매수자 우위 시장으로 전환됨에 따라 구축 대비 신축 구역의 차별화된 상품성 소구 필요." },
-            4: { title: "수도권 입주 예정 물량", category: "주거용 부동산", value: "내년 1분기까지 4만 호 이상", implication: "입주 스파이크에 따른 인근 전·월세가 하방 압력 발생. 분양 시기 조율이 프로젝트 현금흐름의 핵심." },
-            5: { title: "금융권 부동산 PF 대출 연체율", category: "부동산 PF & 금융", value: "3.88% ~ 4.56% (업권별 차등)", implication: "증권사 및 2금융권 토지담보대출 연체율이 높아 브리지론 단계에서의 추가 자금조달 난항 우려." },
-            6: { title: "지방 미분양 및 PF 위험", category: "부동산 PF & 금융", value: "비수도권 적체 지속", implication: "비수도권 사업 추진 시 초기 미분양 리스크에 대비한 시공사 신용보강 및 HUG 보증 필수." },
-            7: { title: "K-REITs (상장 리츠) 성과", category: "상업용 및 리츠", value: "박스권 횡보 (선별적 등락)", implication: "금리 하향 안정화 기대감에 연동. 우량 오피스 및 물류 자산 중심의 간접투자 자금 유입 모니터링." },
-            8: { title: "토지 보상 및 착공 지표", category: "토지 보상 & 인허가", value: "이주율 91% / 철거율 70%", implication: "정부의 신속공급 대책으로 공공택지 및 정비사업 인허가 절차가 가속화되어 본착공 전환 용이." }
+            1: { title: "수도권 아파트 매매가격 변동률", category: "매매가격", value: "상승세 둔화 (서울 +0.7% 내외)", implication: "강남 3구 및 일부 상급지 중심의 과열이 진정되며 관망세로 전환. 실수요자들은 보수적인 매수 접근 필요." },
+            2: { title: "서울 아파트 매매거래량", category: "거래량", value: "월 약 3,900건 수준", implication: "평년(4,100건)을 밑도는 거래 회전율. 매수·매도인 간 희망 가격 격차로 거래 대기 현상 지속." },
+            3: { title: "수도권 아파트 매물 건수", category: "매물", value: "서울 매물 8만 건 돌파 (+40%)", implication: "매수자 우위 시장으로 전환됨에 따라 매수 대기자들의 선택 폭이 넓어지고 있는 국면." },
+            4: { title: "수도권 입주 예정 물량", category: "입주물량", value: "내년 1분기까지 4만 호 이상", implication: "입주 스파이크에 따른 인근 전·월세가 하방 압력 발생. 주변 시세 안정화 요인으로 작용." },
+            5: { title: "주택담보대출 금리 동향", category: "금융·대출", value: "연 3.8% ~ 4.4% (혼합형)", implication: "시장 금리 하향 안정화 추이 반영. 대출 이자 부담이 소폭 경감되나 DSR 규제 영향 지속." },
+            6: { title: "가계 주택대출 증가 속도", category: "금융·대출", value: "전월 대비 증가세 완화", implication: "스트레스 DSR 2단계 도입 및 은행권 가계부채 관리로 무분별한 대출 수요가 진정됨." },
+            7: { title: "수도권 아파트 전세가격 변동률", category: "전월세", value: "+0.4% (안정적 우상향)", implication: "매매 시장 관망세로 전세 수요가 유지되며 역세권 및 중소형 평형 중심으로 완만한 상승세." },
+            8: { title: "수도권 주택 인허가 및 착공", category: "인허가", value: "전년 동기 대비 +33% 증가", implication: "중장기 주택 공급 부족 우려를 일부 해소하는 인허가 및 착공 지표 반등 시그널." }
         };
 
         function openMetricDetail(id) {
@@ -625,42 +625,47 @@ DOCTYPE html>
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
 
-            // Chart 5: 금융권 업권별 PF 연체율 비교
+            // Chart 5: 주택담보대출 금리 추이
             new Chart(document.getElementById('chart5').getContext('2d'), {
-                type: 'bar',
+                type: 'line',
                 data: {
-                    labels: ['은행', '보험', '상호금융', '여신전문', '저축은행', '증권사'],
+                    labels: ['6월', '7월', '8월', '9월', '10월', '11월'],
                     datasets: [{
-                        label: '연체율(%)',
-                        data: [0.2, 1.1, 2.5, 3.4, 6.8, 7.9],
-                        backgroundColor: ['#3b82f6', '#3b82f6', '#8b5cf6', '#8b5cf6', '#ef4444', '#ef4444']
+                        label: '금리(%)',
+                        data: [4.3, 4.2, 4.1, 4.0, 3.9, 3.85],
+                        borderColor: '#8b5cf6',
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        fill: true,
+                        tension: 0.3
                     }]
                 },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
 
-            // Chart 6: 지방 vs 수도권 PF 대출잔액
+            // Chart 6: 서울 vs 경기·인천 아파트 매매가 지수
             new Chart(document.getElementById('chart6').getContext('2d'), {
-                type: 'doughnut',
-                data: {
-                    labels: ['수도권 정상·안정', '수도권 주의', '지방 주의', '지방 부실·위험'],
-                    datasets: [{
-                        data: [55, 15, 18, 12],
-                        backgroundColor: ['#3b82f6', '#60a5fa', '#f59e0b', '#ef4444']
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
-
-            // Chart 7: 공공택지 이주율 및 철거율 진척도
-            new Chart(document.getElementById('chart7').getContext('2d'), {
                 type: 'bar',
                 data: {
-                    labels: ['토지보상 완료율', '주민 이주율', '건축물 철거율', '본착공 전환율'],
+                    labels: ['서울 강남권', '서울 강북권', '경기 남부', '경기 북부', '인천'],
                     datasets: [{
-                        label: '진척도(%)',
-                        data: [95, 91, 70, 45],
-                        backgroundColor: '#06b6d4'
+                        label: '가격 지수',
+                        data: [128.5, 115.2, 108.4, 102.1, 99.8],
+                        backgroundColor: ['#3b82f6', '#60a5fa', '#10b981', '#34d399', '#f59e0b']
                     }]
                 },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+
+            // Chart 7: 수도권 아파트 전세가율 변화
+            new Chart(document.getElementById('chart7').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: ['6월', '7월', '8월', '9월', '10월', '11월'],
+                    datasets: [{
+                        label: '전세가율(%)',
+                        data: [52.1, 52.4, 52.8, 53.1, 53.5, 53.9],
+                        borderColor: '#06b6d4',
+                        backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }]
