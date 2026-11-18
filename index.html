@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+DOCTYPE html>
 <html lang="ko" class="h-full">
 <head>
     <meta charset="UTF-8">
@@ -26,8 +26,8 @@
                     <i class="fa-solid fa-city"></i>
                 </div>
                 <div>
-                    <h1 class="text-lg sm:text-xl font-bold tracking-tight">도시개발사업 부동산 시장 주간 대시보드</h1>
-                    <p class="text-xs text-slate-400"> 주간 브리핑 (기준: 2026년 11월)</p>
+                    <h1 class="text-lg sm:text-xl font-bold tracking-tight">수도권 아파트 시장 주간 대시보드</h1>
+                    <p class="text-xs text-slate-400">주간 브리핑 (기준: 2026년 11월)</p>
                 </div>
             </div>
             <!-- Quick Actions & Status -->
@@ -41,7 +41,7 @@
                 </button>
             </div>
         </div>
-        <!-- Tab Navigation Bar -->
+        <!-- Tab Navigation Bar (Reduced to 3 Tabs) -->
         <div class="bg-slate-800/90 border-t border-slate-700">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-1 sm:space-x-4 overflow-x-auto no-scrollbar">
                 <button onclick="switchTab('metrics')" id="tab-btn-metrics" class="tab-btn py-3 px-4 text-xs sm:text-sm font-semibold border-b-2 border-blue-500 text-white flex items-center gap-2 whitespace-nowrap transition">
@@ -52,9 +52,6 @@
                 </button>
                 <button onclick="switchTab('news')" id="tab-btn-news" class="tab-btn py-3 px-4 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap transition">
                     <i class="fa-solid fa-newspaper"></i> 분야별 뉴스 & 해석
-                </button>
-                <button onclick="switchTab('strategy')" id="tab-btn-strategy" class="tab-btn py-3 px-4 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap transition">
-                    <i class="fa-solid fa-chess-board"></i> 시행사 전략 인사이트
                 </button>
             </div>
         </div>
@@ -220,7 +217,7 @@
             <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center">
                 <div>
                     <h2 class="text-lg font-bold text-slate-800">핵심 시장 데이터 시각화 (8선)</h2>
-                    <p class="text-xs text-slate-500">도시개발사업 타당성 검토 및 분양성 예측을 위한 시계열 데이터 분석</p>
+                    <p class="text-xs text-slate-500">수도권 아파트 시장 타당성 검토 및 분양성 예측을 위한 시계열 데이터 분석</p>
                 </div>
                 <button onclick="resetCharts()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-3 py-1.5 rounded-lg font-medium transition">
                     <i class="fa-solid fa-rotate-right mr-1"></i> 차트 새로고침
@@ -368,9 +365,9 @@
                             <i class="fa-solid fa-bolt-lightning text-lg"></i>
                             <h3 class="font-bold text-base uppercase tracking-wider">오늘의 해석</h3>
                         </div>
-                        <h4 class="font-bold text-lg mb-3 leading-snug">"공급 과잉 시그널 속 시행사의 핀포인트 분양 전략 필요"</h4>
+                        <h4 class="font-bold text-lg mb-3 leading-snug">"공급 과잉 시그널 속 맞춤형 분양 전략 필요"</h4>
                         <p class="text-slate-300 text-sm leading-relaxed mb-4">
-                            수도권 입주 스파이크와 서울 매물 8만 건 돌파는 단순한 경기 침체가 아니라 <b>'가격 민감도 극대화 국면'</b>을 의미합니다. 도시개발사업 시행사는 일률적인 분양가 책정에서 벗어나 인근 지역의 입주 시기와 물량 공백기를 정교하게 교차 분석해야 합니다.
+                            수도권 입주 스파이크와 서울 매물 8만 건 돌파는 단순한 경기 침체가 아니라 <b>'가격 민감도 극대화 국면'</b>을 의미합니다. 시장 참여자는 일률적인 분양가 책정에서 벗어나 인근 지역의 입주 시기와 물량 공백기를 정교하게 교차 분석해야 합니다.
                         </p>
                         <div class="bg-white/10 p-4 rounded-xl border border-white/10 text-xs text-slate-200 space-y-2">
                             <div class="flex items-center gap-2">
@@ -387,69 +384,11 @@
             </div>
         </section>
 
-        <!-- TAB 4: Executive Strategy Insights -->
-        <section id="tab-strategy" class="tab-content hidden space-y-6">
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                <h2 class="text-lg font-bold text-slate-800">시행사 임원 맞춤형 도시개발 전략 인사이트</h2>
-                <p class="text-xs text-slate-500">실무 현장에서 즉시 적용 가능한 3대 핵심 대응 전략</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Strategy 1 -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between">
-                    <div>
-                        <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-lg mb-4">
-                            01
-                        </div>
-                        <h3 class="font-bold text-slate-900 text-base mb-2">분양 리스크 관리를 위한 '타이밍 디테일' 확보</h3>
-                        <p class="text-sm text-slate-600 leading-relaxed mb-4">
-                            현재 수도권 입주 물량이 내년 1분기까지 집중되어 있고 서울 매물이 급증하고 있으므로, 향후 분양을 앞둔 도시개발구역은 단순한 '공급 부족' 논리에서 탈피해야 합니다. 인근 입주 스파이크 시기와 분양 시점을 정교하게 교차 검토하여 마케팅 전략을 차별화하세요.
-                        </p>
-                    </div>
-                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 text-xs text-slate-700 font-medium">
-                        <i class="fa-solid fa-circle-check text-blue-600 mr-1"></i> 액션: 경쟁단지 입주 3개월 전·후 회피 스케줄링
-                    </div>
-                </div>
-
-                <!-- Strategy 2 -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between">
-                    <div>
-                        <div class="w-10 h-10 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center font-bold text-lg mb-4">
-                            02
-                        </div>
-                        <h3 class="font-bold text-slate-900 text-base mb-2">PF 조달 구조의 '질적 차별화' 및 신용보강</h3>
-                        <p class="text-sm text-slate-600 leading-relaxed mb-4">
-                            금융권 PF 연체율이 고점을 거쳐 선별적 구조조정 국면에 있더라도 브리지론 단계의 금리 부담과 대주단 심사는 여전히 엄격합니다. 지자체 인허가 협의 속도를 높이고, 공공참여형 모델이나 HUG 보증 활용으로 자금조달 안정성을 확보해야 합니다.
-                        </p>
-                    </div>
-                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 text-xs text-slate-700 font-medium">
-                        <i class="fa-solid fa-circle-check text-purple-600 mr-1"></i> 액션: HUG 보증 및 시공사 신용공강 선제 협의
-                    </div>
-                </div>
-
-                <!-- Strategy 3 -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between">
-                    <div>
-                        <div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-lg mb-4">
-                            03
-                        </div>
-                        <h3 class="font-bold text-slate-900 text-base mb-2">토지 취득 및 보상 리스크의 선제적 통제</h3>
-                        <p class="text-sm text-slate-600 leading-relaxed mb-4">
-                            정부의 신속공급 대책 트렌드에 발맞추어 민간 도시개발사업 역시 주민 동의율 조기 확보와 국공유지 무상귀속 협의를 서둘러야 합니다. 인허가 병목을 줄이고 사업 기간을 단축하는 것이 곧 금융비용(IDC) 방어의 핵심입니다.
-                        </p>
-                    </div>
-                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 text-xs text-slate-700 font-medium">
-                        <i class="fa-solid fa-circle-check text-amber-600 mr-1"></i> 액션: 국공유지 무상귀속 패스트트랙 협의체 가동
-                    </div>
-                </div>
-            </div>
-        </section>
-
     </main>
 
     <!-- Footer -->
     <footer class="bg-slate-800 text-slate-400 py-4 text-xs text-center border-t border-slate-700">
-        <p>&copy; 2026 도시개발사업 부동산 시장 주간 대시보드. All rights reserved. | Executive Briefing System</p>
+        <p>&copy; 2026 수도권 아파트 시장 주간 대시보드. All rights reserved. | Executive Briefing System</p>
     </footer>
 
     <!-- Metric Detail Modal -->
@@ -469,7 +408,7 @@
                 <p id="modal-value" class="text-2xl font-extrabold text-blue-600">-</p>
             </div>
             <div>
-                <h4 class="text-sm font-bold text-slate-800 mb-1">도시개발사업 실무 시사점</h4>
+                <h4 class="text-sm font-bold text-slate-800 mb-1">시장 실무 시사점</h4>
                 <p id="modal-implication" class="text-sm text-slate-600 leading-relaxed">-</p>
             </div>
             <div class="pt-4 border-t border-slate-100 flex justify-end">
@@ -542,7 +481,7 @@
 
     <!-- JavaScript Logic & Chart Initializations -->
     <script>
-        // Tab Navigation Logic
+        // Tab Navigation Logic (3 Tabs)
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(el => {
@@ -573,12 +512,12 @@
         const metricData = {
             1: { title: "수도권 아파트 매매가격 변동률", category: "주거용 부동산", value: "상승세 둔화 (서울 +0.7% 내외)", implication: "강남 3구 및 일부 상급지 중심의 과열이 진정되며 관망세로 전환. 분양가 책정 시 주변 시세 대비 보수적인 산정이 요구됨." },
             2: { title: "서울 아파트 매매거래량", category: "주거용 부동산", value: "월 약 3,900건 수준", implication: "평년(4,100건)을 밑도는 거래 회전율. 실수요자들의 매수 타이밍 지연으로 초기 분양률 제고 마케팅 필수." },
-            3: { title: "수도권 아파트 매물 건수", category: "주거용 부동산", value: "서울 매물 8만 건 돌파 (+40%)", implication: "매수자 우위 시장으로 전환됨에 따라 구축 대비 신축 도시개발구역의 차별화된 상품성 소구 필요." },
+            3: { title: "수도권 아파트 매물 건수", category: "주거용 부동산", value: "서울 매물 8만 건 돌파 (+40%)", implication: "매수자 우위 시장으로 전환됨에 따라 구축 대비 신축 구역의 차별화된 상품성 소구 필요." },
             4: { title: "수도권 입주 예정 물량", category: "주거용 부동산", value: "내년 1분기까지 4만 호 이상", implication: "입주 스파이크에 따른 인근 전·월세가 하방 압력 발생. 분양 시기 조율이 프로젝트 현금흐름의 핵심." },
             5: { title: "금융권 부동산 PF 대출 연체율", category: "부동산 PF & 금융", value: "3.88% ~ 4.56% (업권별 차등)", implication: "증권사 및 2금융권 토지담보대출 연체율이 높아 브리지론 단계에서의 추가 자금조달 난항 우려." },
-            6: { title: "지방 미분양 및 PF 위험", category: "부동산 PF & 금융", value: "비수도권 적체 지속", implication: "지방 도시개발사업 시행 시 초기 미분양 리스크에 대비한 시공사 신용보강 및 HUG 보증 필수." },
+            6: { title: "지방 미분양 및 PF 위험", category: "부동산 PF & 금융", value: "비수도권 적체 지속", implication: "비수도권 사업 추진 시 초기 미분양 리스크에 대비한 시공사 신용보강 및 HUG 보증 필수." },
             7: { title: "K-REITs (상장 리츠) 성과", category: "상업용 및 리츠", value: "박스권 횡보 (선별적 등락)", implication: "금리 하향 안정화 기대감에 연동. 우량 오피스 및 물류 자산 중심의 간접투자 자금 유입 모니터링." },
-            8: { title: "토지 보상 및 착공 지표", category: "토지 보상 & 인허가", value: "이주율 91% / 철거율 70%", implication: "정부의 신속공급 대책으로 공공택지 및 도시개발 인허가 절차가 가속화되어 본착공 전환 용이." }
+            8: { title: "토지 보상 및 착공 지표", category: "토지 보상 & 인허가", value: "이주율 91% / 철거율 70%", implication: "정부의 신속공급 대책으로 공공택지 및 정비사업 인허가 절차가 가속화되어 본착공 전환 용이." }
         };
 
         function openMetricDetail(id) {
@@ -725,29 +664,3 @@
                     }]
                 },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
-
-            // Chart 8: 주택 인허가 및 착공 물량 회복세
-            new Chart(document.getElementById('chart8').getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels: ['전년 동기', 'Q1', 'Q2', 'Q3', '현재'],
-                    datasets: [{
-                        label: '인허가 지수',
-                        data: [100, 115, 128, 142, 150],
-                        borderColor: '#8b5cf6',
-                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
-        };
-
-        function resetCharts() {
-            alertAction('모든 차트 데이터가 최신 버전으로 갱신되었습니다.');
-        }
-    </script>
-</body>
-</html>
