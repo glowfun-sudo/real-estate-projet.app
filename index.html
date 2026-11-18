@@ -669,3 +669,28 @@
                         fill: true,
                         tension: 0.3
                     }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+
+            // Chart 8: 주택 인허가 및 착공 물량 회복세
+            new Chart(document.getElementById('chart8').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['전년 동기', 'Q1', 'Q2', 'Q3', '현재'],
+                    datasets: [{
+                        label: '인허가 지수',
+                        data: [100, 115, 128, 142, 150],
+                        backgroundColor: '#6366f1'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+        };
+
+        function resetCharts() {
+            alertAction('모든 차트 데이터가 최신 버전으로 갱신되었습니다.');
+        }
+    </script>
+</body>
+</html>
