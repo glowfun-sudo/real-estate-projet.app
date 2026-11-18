@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>부동산 금융 시장 주간 대시보드</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome CDN for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Pretendard', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col">
+
+    <!-- 상단 네비게이션 헤더 -->
+    <header class="bg-slate-900 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-blue-600 p-2.5 rounded-xl shadow-md">
+                    <i class="fa-solid fa-chart-line text-xl text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight">부동산 금융 시장 주간 브리핑</h1>
+                    <p class="text-xs text-slate-400">도시개발사업 시행사 및 자금조달 실무자를 위한 전문 대시보드</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <span class="bg-slate-800 border border-slate-700 text-slate-300 text-xs px-3 py-1.5 rounded-full font-medium">
+                    <i class="fa-regular fa-calendar-days mr-1.5 text-blue-400"></i> 2026년 3주차 업데이트
+                </span>
+                <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2 rounded-xl transition shadow-md flex items-center gap-1.5">
+                    <i class="fa-solid fa-download"></i> 리포트 다운로드
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 메인 컨테이너 -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow space-y-8 w-full">
+
+        <!-- 8개 핵심 지표 카드 섹션 -->
+        <section>
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-gauge-high text-blue-600"></i> 핵심 금융 지표 요약
+                </h2>
+                <span class="text-xs text-slate-500">* 전주 대비 변동폭 기준</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                
+                <!-- 지표 1: 한국은행 기준금리 -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">한국은행 기준금리</span>
+                        <span class="bg-slate-100 text-slate-600 text-xs px-2 py-0.5 rounded font-medium">통화정책</span>
+                    </div>
+                    <div class="mt-3 flex items-baseline justify-between">
+                        <span class="text-2xl sm:text-3xl font-extrabold text-slate-900">3.25%</span>
+                        <span class="text-xs font-semibold text-slate-500">동결</span>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2 flex items-center gap-1">
+                        <i class="fa-solid fa-minus text-slate-400"></i> 직전 금리 수준 유지
+                    </p>
+                </div>
+
+                <!-- 지표 2: 국고채 3년물 -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">국고채 3년물</span>
+                        <span class="bg-blue-50 text-blue-600 text-xs px-2 py-0.5 rounded font-medium">채권금리</span>
+                    </div>
+                    <div class="mt-3 flex items-baseline justify-between">
+                        <span class="text-2xl sm:text-3xl font-extrabold text-slate-900">2.91%</span>
+                        <span class="text-xs font-semibold text-rose-600 flex items-center">+0.04%p <i class="fa-solid fa-arrow-up ml-0.5"></i></span>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2 flex items-center gap-1">
+                        <i class="fa-solid fa-chart-line text-rose-500"></i> 단기물 금리 소폭 상승 압력
+                    </p>
+                </div>
+
+                <!-- 지표 3: 코픽스(신규취급액) -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">코픽스 (신규취급액)</span>
+                        <span class="bg-emerald-50 text-emerald-600 text-xs px-2 py-0.5 rounded font-medium">대출금리</span>
+                    </div>
+                    <div class="mt-3 flex items-baseline justify-between">
+                        <span class="text-2xl sm:text-3xl font-extrabold text-slate-900">3.42%</span>
+                        <span class="text-xs font-semibold text-emerald-600 flex items-center">-0.02%p <i class="fa-solid fa-arrow-down ml-0.5"></i></span>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2 flex items-center gap-1">
+                        <i class="fa-solid fa-arrow-trend-down text-emerald-500"></i> 주담대 금리 하향 안정세
+                    </p>
+                </div>
+
+                <!-- 지표 4: 부동산 PF 연체율 -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">부동산 PF 연체율</span>
+                        <span class="bg-rose-50 text-rose-600 text-xs px-2 py-0.5 rounded font-medium">리스크</span>
+                    </div>
+                    <div class="mt-3 flex items-baseline justify-between">
+                        <span class="text-2xl sm:text-3xl font-extrabold text-slate-900">3.18%</span>
+                        <span class="text-xs font-semibold text-rose-600 flex items-center">+0.12%p <i class="fa-solid fa-arrow-up ml-0.5"></i></span>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2 flex items-center gap-1">
+                        <i class="fa-solid fa-triangle-exclamation text-rose-500"></i> 비주택 중심 부실 정리 지속
+                    </p>
+                </div>
+
+                <!-- 지표 5: K-REITs 성과 지수 -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">K-REITs 종합지수</span>
+                        <span class="bg-amber-50 text-amber-600 text-xs px-2 py-0.5 rounded font-medium">간접투자</span>
+                    </div>
+                    <div class="mt-3 flex items-baseline justify-between">
+                        <span class="text-2xl sm:text-3xl font-extrabold text-slate-900">1,042.5</span>
+                        <span class="text-xs font-semibold text-emerald-600 flex items-center">+1.4% <i class="fa-solid fa-arrow-up ml-0.5"></i></span>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2 flex items-center gap-1">
+                        <i class="fa-solid fa-building text-amber-500"></i> 우량 오피스 리츠 중심 회복
+                    </p>
+                </div>
+
+                <!-- 지표 6: 서울 아파트 매매가격 변동률 -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">서울 아파트 매매변동</span>
+                        <span class="bg-blue-50 text-blue-600 text-xs px-2 py-0.5 rounded font-medium">주거시장</span>
+                    </div>
+                    <div class="mt-3 flex items-baseline justify-between">
+                        <span class="text-2xl sm:text-3xl font-extrabold text-slate-900">+0.08%</span>
+                        <span class="text-xs font-semibold text-emerald-600 flex items-center">상승세 유지</span>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2 flex items-center gap-1">
+                        <i class="fa-solid fa-house-chimney text-blue-500"></i> 강남권 및 역세권 위주 거래
+                    </p>
+                </div>
+
+                <!-- 지표 7: 토지보상 및 개발사업 유동성 -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">도시개발 유동성 지수</span>
+                        <span class="bg-indigo-50 text-indigo-600 text-xs px-2 py-0.5 rounded font-medium">시행실무</span>
+                    </div>
+                    <div class="mt-3 flex items-baseline justify-between">
+                        <span class="text-2xl sm:text-3xl font-extrabold text-slate-900">84.2</span>
+                        <span class="text-xs font-semibold text-rose-600 flex items-center">-1.5 pt <i class="fa-solid fa-arrow-down ml-0.5"></i></span>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2 flex items-center gap-1">
+                        <i class="fa-solid fa-wallet text-indigo-500"></i> 브릿지론 본PF 전환 심사 까다로움
+                    </p>
+                </div>
+
+                <!-- 지표 8: 회사채 스프레드 (AA-) -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">회사채 스프레드 (AA-)</span>
+                        <span class="bg-slate-100 text-slate-600 text-xs px-2 py-0.5 rounded font-medium">신용스프레드</span>
+                    </div>
+                    <div class="mt-3 flex items-baseline justify-between">
+                        <span class="text-2xl sm:text-3xl font-extrabold text-slate-900">68 bp</span>
+                        <span class="text-xs font-semibold text-slate-500">보합</span>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2 flex items-center gap-1">
+                        <i class="fa-solid fa-shield-halved text-slate-500"></i> 우량채권 투자 심리 안정화
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 차트 영역 섹션 -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- 차트 1: 금리 및 스프레드 추이 -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-area text-blue-600"></i> 기준금리 및 시장금리 추이 (최근 6개월)
+                        </h3>
+                        <span class="text-xs text-slate-400">단위: %</span>
+                    </div>
+                    <p class="text-xs text-slate-500 mb-4">국고채 및 코픽스 금리 변화에 따른 조달금리 압력 분석</p>
+                </div>
+                <div class="relative h-72 w-full">
+                    <canvas id="rateTrendChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 차트 2: K-REITs 성과 및 PF 연체율 비교 -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-bar text-indigo-600"></i> K-REITs 수익률 vs 부동산 PF 연체율
+                        </h3>
+                        <span class="text-xs text-slate-400">지수(pt) / 연체율(%)</span>
+                    </div>
+                    <p class="text-xs text-slate-500 mb-4">간접투자 시장 회복세와 실물 시행 PF 리스크 양극화 추이</p>
+                </div>
+                <div class="relative h-72 w-full">
+                    <canvas id="reitsPfChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- 하단 영역: 오늘의 해석 및 분야별 뉴스 -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- 시행사 실무자 관점의 '오늘의 해석' (2칸 차지) -->
+            <div class="lg:col-span-2 bg-gradient-to-br from-slate-900 to-blue-950 text-white p-6 sm:p-8 rounded-2xl shadow-md flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-lightbulb text-amber-300"></i> Expert Insight
+                        </span>
+                        <span class="text-xs text-slate-400">발행인: 도시개발금융팀 실무 수석 컨설턴트</span>
+                    </div>
+                    <h3 class="text-xl sm:text-2xl font-bold tracking-tight mb-3">
+                        "브릿지론 만기 연장보다는 본PF 전환을 위한 에퀴티(Equity) 선조달이 시급한 시점"
+                    </h3>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                        최근 국고채 금리와 코픽스 금리가 혼조세를 보이는 가운데, 대주단은 여전히 타이트한 LTV 심사와 시공사 신용보강을 요구하고 있습니다. 특히 지방 도시개발사업의 경우 토지 매입 지연에 따른 브릿지론 이자 부담이 가중되고 있어, 시행사는 토지 소유권 확보율을 높이고 책임준공 확약 조건 외에 추가 신용공여 구조를 다변화해야 합니다.
+                    </p>
+                </div>
+                <div class="border-t border-slate-800 pt-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-xs text-slate-400">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        실무 대응 전략: 공공택지 연계 사업지 우선 검토 및 시공사 팩토링 활용 권장
+                    </div>
+                    <button onclick="alertBox('전문가 칼럼 전문 페이지로 이동합니다.')" class="text-blue-400 hover:text-blue-300 font-semibold flex items-center gap-1">
+                        전체 칼럼 읽기 <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 분야별 뉴스 링크 섹션 (1칸 차지) -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-newspaper text-blue-600"></i> 주요 분야별 뉴스 브리핑
+                    </h3>
+                    <div class="space-y-3">
+                        <a href="#" onclick="alertBox('해당 기사 링크로 연결됩니다.')" class="block p-3 rounded-xl bg-slate-50 hover:bg-blue-50/50 transition border border-slate-100 group">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-[11px] font-semibold text-blue-600 bg-blue-100/60 px-2 py-0.5 rounded">금융·조달</span>
+                                <span class="text-[10px] text-slate-400">2시간 전</span>
+                            </div>
+                            <p class="text-xs font-medium text-slate-800 group-hover:text-blue-600 transition line-clamp-2">
+                                금융당국, 부동산 PF 사업성 평가 기준 손질… 정상 사업장 유동성 공급 확대
+                            </p>
+                        </a>
+                        <a href="#" onclick="alertBox('해당 기사 링크로 연결됩니다.')" class="block p-3 rounded-xl bg-slate-50 hover:bg-blue-50/50 transition border border-slate-100 group">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-[11px] font-semibold text-indigo-600 bg-indigo-100/60 px-2 py-0.5 rounded">도시개발</span>
+                                <span class="text-[10px] text-slate-400">5시간 전</span>
+                            </div>
+                            <p class="text-xs font-medium text-slate-800 group-hover:text-indigo-600 transition line-clamp-2">
+                                서울시, 역세권 활성화 사업 용적률 완화 적용 범위 확대 발표
+                            </p>
+                        </a>
+                        <a href="#" onclick="alertBox('해당 기사 링크로 연결됩니다.')" class="block p-3 rounded-xl bg-slate-50 hover:bg-blue-50/50 transition border border-slate-100 group">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-[11px] font-semibold text-amber-600 bg-amber-100/60 px-2 py-0.5 rounded">REITs</span>
+                                <span class="text-[10px] text-slate-400">1일 전</span>
+                            </div>
+                            <p class="text-xs font-medium text-slate-800 group-hover:text-amber-600 transition line-clamp-2">
+                                공공지원 민간임대 리츠 공모 활성화… 기관 투자자 참여 러시
+                            </p>
+                        </a>
+                    </div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-100 text-center">
+                    <button onclick="alertBox('실시간 뉴스 아카이브로 이동합니다.')" class="text-xs font-semibold text-slate-600 hover:text-blue-600 transition">
+                        모든 뉴스 및 공시 보기 <i class="fa-solid fa-chevron-right text-[10px] ml-1"></i>
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-8 mt-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-2">
+                <span class="font-bold text-white text-sm">Real Estate Finance Dashboard</span>
+                <span>© 2026 All Rights Reserved.</span>
+            </div>
+            <div class="flex space-x-6">
+                <a href="#" onclick="alertBox('이용약관 페이지입니다.')" class="hover:text-white transition">이용약관</a>
+                <a href="#" onclick="alertBox('개인정보처리방침 페이지입니다.')" class="hover:text-white transition">개인정보처리방침</a>
+                <a href="#" onclick="alertBox('문의하기: support@realestate-finance.net')" class="hover:text-white transition">고객센터 / 제휴문의</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 커스텀 모달 알림 박스 (alert 대체) -->
+    <div id="customModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-xl transform scale-95 transition-transform duration-300" id="modalContent">
+            <div class="flex items-center space-x-3 mb-4">
+                <div class="bg-blue-100 p-2.5 rounded-full text-blue-600">
+                    <i class="fa-solid fa-circle-info text-lg"></i>
+                </div>
+                <h4 class="text-base font-bold text-slate-900" id="modalTitle">안내 메시지</h4>
+            </div>
+            <p class="text-sm text-slate-600 mb-6" id="modalMessage">알림 내용이 여기에 표시됩니다.</p>
+            <div class="flex justify-end">
+                <button onclick="closeModal()" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs px-5 py-2.5 rounded-xl transition shadow">
+                    확인
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 스크립트 및 차트 렌더링 로직 -->
+    <script>
+        // 커스텀 모달 함수 (alert() 대체 규칙 준수)
+        function alertBox(message, title = "시스템 안내") {
+            const modal = document.getElementById('customModal');
+            const modalContent = document.getElementById('modalContent');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalMessage = document.getElementById('modalMessage');
+
+            modalTitle.innerText = title;
+            modalMessage.innerText = message;
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('customModal');
+            const modalContent = document.getElementById('modalContent');
+
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function openModal() {
+            alertBox("2026년 3월 주간 부동산 금융 종합 리포트(PDF) 다운로드가 시작되었습니다.", "리포트 다운로드");
+        }
+
+        // Chart.js 초기화 및 렌더링
+        window.onload = function() {
+            // 1. 금리 및 스프레드 추이 차트
+            const rateCtx = document.getElementById('rateTrendChart').getContext('2d');
+            new Chart(rateCtx, {
+                type: 'line',
+                data: {
+                    labels: ['10월', '11월', '12월', '1월', '2월', '3월(현재)'],
+                    datasets: [
+                        {
+                            label: '한국은행 기준금리',
+                            data: [3.25, 3.25, 3.25, 3.25, 3.25, 3.25],
+                            borderColor: '#3b82f6',
+                            backgroundColor: '#3b82f6',
+                            borderWidth: 2,
+                            tension: 0.3
+                        },
+                        {
+                            label: '국고채 3년물',
+                            data: [2.85, 2.92, 2.88, 2.84, 2.87, 2.91],
+                            borderColor: '#6366f1',
+                            backgroundColor: '#6366f1',
+                            borderWidth: 2,
+                            tension: 0.3
+                        },
+                        {
+                            label: '코픽스(신규)',
+                            data: [3.55, 3.50, 3.48, 3.45, 3.44, 3.42],
+                            borderColor: '#10b981',
+                            backgroundColor: '#10b981',
+                            borderWidth: 2,
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    family: 'Pretendard',
+                                    size: 11
+                                },
+                                boxWidth: 12
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            grid: { color: '#f1f5f9' },
+                            ticks: { font: { family: 'Pretendard', size: 10 } }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { family: 'Pretendard', size: 10 } }
+                        }
+                    }
+                }
+            });
+
+            // 2. K-REITs 성과 및 PF 연체율 비교 차트
+            const reitsPfCtx = document.getElementById('reitsPfChart').getContext('2d');
+            new Chart(reitsPfCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['10월', '11월', '12월', '1월', '2월', '3월(현재)'],
+                    datasets: [
+                        {
+                            label: 'K-REITs 지수 (/100)',
+                            data: [10.1, 10.2, 10.3, 10.2, 10.3, 10.42],
+                            backgroundColor: '#3b82f6',
+                            borderRadius: 6,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: '부동산 PF 연체율 (%)',
+                            data: [2.95, 3.02, 3.08, 3.10, 3.15, 3.18],
+                            backgroundColor: '#f43f5e',
+                            borderRadius: 6,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    family: 'Pretendard',
+                                    size: 11
+                                },
+                                boxWidth: 12
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            grid: { color: '#f1f5f9' },
+                            ticks: { font: { family: 'Pretendard', size: 10 } },
+                            title: { display: true, text: 'K-REITs 지수 (백)', font: { size: 10 } }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: { drawOnChartArea: false },
+                            ticks: { font: { family: 'Pretendard', size: 10 } },
+                            title: { display: true, text: 'PF 연체율 (%)', font: { size: 10 } }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { family: 'Pretendard', size: 10 } }
+                        }
+                    }
+                }
+            });
+        };
+    </script>
+</body>
+</html>
