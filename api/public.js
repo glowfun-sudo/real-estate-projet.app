@@ -1,12 +1,12 @@
 // Vercel Serverless Function: GET /api/public
 // 공공데이터 실시간 연동
 //  1) 청약홈(한국부동산원) APT 분양정보  - 공공데이터포털 인증키 필요 (DATA_GO_KR_KEY)
-//  2) 국토교통부 아파트 매매 실거래가    - 공공데이터포털 인증키 필요 (DATA_GO_KR_KEY)
+//  2) 국토교통부 아파트 매매 실거래가 상세- 공공데이터포털 인증키 필요 (DATA_GO_KR_KEY)
 //  3) 국토교통부·행정안전부 보도자료     - 키 불필요 (정책브리핑 RSS, 실패 시 Google 뉴스)
 //
 // 공공데이터포털(data.go.kr)에서 아래 3개 API를 '활용신청'하면 같은 인증키로 모두 쓸 수 있습니다.
 //  - 한국부동산원_청약홈 분양정보 조회 서비스
-//  - 국토교통부_아파트 매매 실거래가 자료
+//  - 국토교통부_아파트 매매 실거래가 상세 자료
 
 const SEOUL_GU = [
   ['11110', '종로구'], ['11140', '중구'], ['11170', '용산구'], ['11200', '성동구'], ['11215', '광진구'],
@@ -107,7 +107,7 @@ function friendlyError(msg = '') {
 }
 
 async function tradesFor(key, lawd, month) {
-  const url = 'https://apis.data.go.kr/1613000/RTMSDataSvcAptTrade/getRTMSDataSvcAptTrade' +
+  const url = 'https://apis.data.go.kr/1613000/RTMSDataSvcAptTradeDev/getRTMSDataSvcAptTradeDev' +
     `?serviceKey=${keyParam(key)}&LAWD_CD=${lawd}&DEAL_YMD=${month}&pageNo=1&numOfRows=1000`;
   return parseTrades(await fetchText(url));
 }
