@@ -905,10 +905,11 @@
             const list = document.getElementById('press-list');
             const origin = document.getElementById('press-origin');
             if (!block || !block.ok) { list.replaceChildren(emptyRow(sectionError(block))); origin.textContent = ''; return; }
-            origin.textContent = '출처: ' + block.origin + (publicData.press === 'mois' ? ' · 주민등록·인구·지방세·부동산 관련만 표시' : '');
+            origin.textContent = '출처: ' + block.origin;
             if (!block.items.length) { list.replaceChildren(emptyRow('최근 보도자료가 없습니다.')); return; }
             list.replaceChildren(...block.items.map(it => {
                 const li = el('li', 'py-2.5');
+                if (it.relevant) li.appendChild(el('span', 'text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 mr-1.5', '주거·인구'));
                 li.appendChild(linkOrText(it.title, it.url, 'font-medium text-slate-800 leading-snug'));
                 li.appendChild(el('div', 'text-xs text-slate-400 mt-0.5', [it.source, timeAgo(it.publishedAt)].filter(Boolean).join(' · ')));
                 return li;

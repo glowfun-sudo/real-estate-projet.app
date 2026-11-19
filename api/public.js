@@ -148,39 +148,38 @@ async function realTrades(key) {
 }
 
 // ---------- 3) 국토부·행안부 보도자료 ----------
-const PRESS = [
-  { key: 'molit', label: '국토교통부', rss: 'https://www.korea.kr/rss/dept_molit.xml', query: '국토교통부 주택 보도자료', filter: null },
-  { key: 'mois', label: '행정안전부', rss: 'https://www.korea.kr/rss/dept_mois.xml', query: '행정안전부 주민등록 인구 지방세',
-    filter: /주민등록|인구|세대|주소|부동산|주택|지방세|재산세|취득세|전입|이사|지역|정주/ },
-];
+// 행정안전부: 부처 공식 보도자료 RSS
+// 국토교통부: 부처 사이트가 해외 서버 접속을 막아, 정책브리핑(korea.kr) 게시물만 Google 뉴스로 검색
+const MOIS_RELEVANT = /주민등록|인구|세대|주소|부동산|주택|지방세|재산세|취득세|전입|이사|지역|정주|공시/;
 
 function parseRss(xml) {
-  return (xml.match(/<item>[\s\S]*?<\/item>/g) || []).map((it) => ({
-    title: tag(it, 'title'),
-    url: safeUrl(tag(it, 'link')),
-    source: tag(it, 'source') || '',
-    publishedAt: isoDate(tag(it, 'pubDate')),
-  })).filter((x) => x.title && x.url);
+  return (xml.match(/<item>[\s\S]*?<\/item>/g) || []).map((it) => {
+    let title = tag(it, 'title');
+    const source = tag(it, 'source');
+    if (source && title.endsWith(` - ${source}`)) title = title.slice(0, -(source.length + 3));
+    return {
+      title,
+      url: safeUrl(tag(it, 'link')),
+      source,
+      publishedAt: isoDate(tag(it, 'pubDate').replace(/\bKST\b/i, '+0900')),
+    };
+  }).filter((x) => x.title && x.url);
 }
 
-async function press(p) {
-  let items = [];
-  let origin = '정책브리핑';
-  try {
-    items = parseRss(await fetchText(p.rss, { headers: { 'User-Agent': 'Mozilla/5.0' } }, 6000));
-    if (p.filter) items = items.filter((i) => p.filter.test(i.title));
-  } catch (e) { items = []; }
-  if (items.length < 3) {
-    origin = 'Google 뉴스';
-    const q = encodeURIComponent(`${p.query} when:14d`);
-    items = parseRss(await fetchText(`https://news.google.com/rss/search?q=${q}&hl=ko&gl=KR&ceid=KR:ko`,
-      { headers: { 'User-Agent': 'Mozilla/5.0' } }, 6000)).map((i) => {
-      if (i.source && i.title.endsWith(` - ${i.source}`)) i.title = i.title.slice(0, -(i.source.length + 3));
-      return i;
-    });
-  }
+const UA = { headers: { 'User-Agent': 'Mozilla/5.0' } };
+
+async function pressMolit() {
+  const q = encodeURIComponent('국토교통부 주택 site:korea.kr when:30d');
+  const items = parseRss(await fetchText(`https://news.google.com/rss/search?q=${q}&hl=ko&gl=KR&ceid=KR:ko`, UA, 7000));
   items.sort((a, b) => (b.publishedAt || '').localeCompare(a.publishedAt || ''));
-  return { label: p.label, origin, items: items.slice(0, 10) };
+  return { label: '국토교통부', origin: '정책브리핑(korea.kr) 게시물 · Google 뉴스 경유', items: items.slice(0, 10) };
+}
+
+async function pressMois() {
+  const all = parseRss(await fetchText('https://www.mois.go.kr/gpms/view/jsp/rss/rss.jsp?ctxCd=1012', UA, 7000))
+    .map((i) => ({ ...i, source: '행정안전부', relevant: MOIS_RELEVANT.test(i.title) }));
+  all.sort((a, b) => (b.relevant - a.relevant) || (b.publishedAt || '').localeCompare(a.publishedAt || ''));
+  return { label: '행정안전부', origin: '행정안전부 보도자료 RSS · 주민등록·인구·지방세·부동산 관련 우선', items: all.slice(0, 10) };
 }
 
 // ---------- handler ----------
@@ -194,8 +193,8 @@ module.exports = async (req, res) => {
   const [cy, rt, molit, mois] = await Promise.all([
     keyConfigured ? wrap(cheongyak(key)) : noKey,
     keyConfigured ? wrap(realTrades(key)) : noKey,
-    wrap(press(PRESS[0])),
-    wrap(press(PRESS[1])),
+    wrap(pressMolit()),
+    wrap(pressMois()),
   ]);
 
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
