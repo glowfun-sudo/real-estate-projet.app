@@ -99,6 +99,13 @@ function parseTrades(xml) {
   })).filter((t) => t.price && !t.canceled);
 }
 
+function friendlyError(msg = '') {
+  if (/SERVICE_KEY_IS_NOT_REGISTERED/.test(msg)) return '인증키에 이 API 활용신청이 안 되어 있습니다 (data.go.kr에서 활용신청 후 승인까지 최대 1~2시간)';
+  if (/LIMITED_NUMBER_OF_SERVICE_REQUESTS/.test(msg)) return '공공데이터포털 호출 한도 초과 (잠시 후 자동 재시도)';
+  if (/SERVICE_ACCESS_DENIED/.test(msg)) return '이 API 사용이 승인되지 않았습니다';
+  return msg;
+}
+
 async function tradesFor(key, lawd, month) {
   const url = 'https://apis.data.go.kr/1613000/RTMSDataSvcAptTrade/getRTMSDataSvcAptTrade' +
     `?serviceKey=${keyParam(key)}&LAWD_CD=${lawd}&DEAL_YMD=${month}&pageNo=1&numOfRows=1000`;
@@ -111,13 +118,23 @@ async function realTrades(key) {
   const prev = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, 1));
   const prevMonth = ym(prev);
 
-  const jobs = [];
+  // 공공데이터포털은 순간 동시 요청이 많으면 429를 돌려주므로 4개씩 나눠 조회
+  const tasks = [];
   for (const [code, name] of SEOUL_GU) {
-    jobs.push(tradesFor(key, code, prevMonth).then((r) => ({ code, name, month: 'prev', r })));
-    jobs.push(tradesFor(key, code, thisMonth).then((r) => ({ code, name, month: 'cur', r })));
+    tasks.push({ code, name, month: 'prev', ymd: prevMonth });
+    tasks.push({ code, name, month: 'cur', ymd: thisMonth });
   }
-  const settled = await Promise.allSettled(jobs);
-  const errors = settled.filter((s) => s.status === 'rejected').map((s) => s.reason && s.reason.message);
+  // 첫 요청으로 키 상태부터 확인 (미등록 키면 50번 호출하지 않음)
+  try { await tradesFor(key, tasks[0].code, tasks[0].ymd); }
+  catch (e) { throw new Error(friendlyError(e.message)); }
+
+  const settled = [];
+  for (let i = 0; i < tasks.length; i += 4) {
+    const batch = tasks.slice(i, i + 4);
+    const res = await Promise.allSettled(batch.map((t) => tradesFor(key, t.code, t.ymd).then((r) => ({ ...t, r }))));
+    settled.push(...res);
+  }
+  const errors = settled.filter((s) => s.status === 'rejected').map((s) => friendlyError(s.reason && s.reason.message));
   if (errors.length === settled.length) throw new Error(errors[0] || '실거래가 조회 실패');
 
   const byGu = new Map(SEOUL_GU.map(([code, name]) => [code, { code, name, prev: [], cur: [] }]));
