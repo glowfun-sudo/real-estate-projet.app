@@ -168,11 +168,27 @@ function parseRss(xml) {
 
 const UA = { headers: { 'User-Agent': 'Mozilla/5.0' } };
 
+const MOLIT_RELEVANT = /주택|부동산|아파트|전세|월세|임대|분양|청약|공급|택지|재건축|재개발|정비사업|공시가격|실거래|주거|입주|신도시|리모델링|집값|LH/;
+
 async function pressMolit() {
-  const q = encodeURIComponent('국토교통부 주택 site:korea.kr when:30d');
-  const items = parseRss(await fetchText(`https://news.google.com/rss/search?q=${q}&hl=ko&gl=KR&ceid=KR:ko`, UA, 7000));
+  const queries = ['국토교통부 주택 site:korea.kr when:30d', '국토교통부 부동산 site:korea.kr when:30d', '국토교통부 아파트 공급 site:korea.kr when:30d'];
+  const results = await Promise.allSettled(queries.map((q) =>
+    fetchText(`https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=ko&gl=KR&ceid=KR:ko`, UA, 7000).then(parseRss)));
+  const seen = new Set();
+  const items = [];
+  results.forEach((r) => {
+    if (r.status !== 'fulfilled') return;
+    r.value.forEach((i) => {
+      i.title = i.title.replace(/\s+-\s+(카드\/한컷|영상|사진)?\s*\|?\s*멀티미디어$/, '');
+      const key = i.title.replace(/\s+/g, '');
+      if (!MOLIT_RELEVANT.test(i.title) || seen.has(key)) return;
+      seen.add(key);
+      items.push(i);
+    });
+  });
+  if (!items.length && results.every((r) => r.status === 'rejected')) throw new Error(results[0].reason.message);
   items.sort((a, b) => (b.publishedAt || '').localeCompare(a.publishedAt || ''));
-  return { label: '국토교통부', origin: '정책브리핑(korea.kr) 게시물 · Google 뉴스 경유', items: items.slice(0, 10) };
+  return { label: '국토교통부', origin: '정책브리핑(korea.kr) 주택·부동산 게시물 · Google 뉴스 경유', items: items.slice(0, 10) };
 }
 
 async function pressMois() {
