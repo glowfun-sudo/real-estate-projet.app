@@ -150,7 +150,7 @@ async function realTrades(key) {
 // ---------- 3) 국토부·행안부 보도자료 ----------
 // 행정안전부: 부처 공식 보도자료 RSS
 // 국토교통부: 부처 사이트가 해외 서버 접속을 막아, 정책브리핑(korea.kr) 게시물만 Google 뉴스로 검색
-const MOIS_RELEVANT = /주민등록|인구|세대|주소|부동산|주택|지방세|재산세|취득세|전입|이사|지역|정주|공시/;
+const MOIS_RELEVANT = /주민등록|인구|주소|부동산|주택|지방세|재산세|취득세|전입|정주|공시/;
 
 function parseRss(xml) {
   return (xml.match(/<item>[\s\S]*?<\/item>/g) || []).map((it) => {
@@ -168,7 +168,7 @@ function parseRss(xml) {
 
 const UA = { headers: { 'User-Agent': 'Mozilla/5.0' } };
 
-const MOLIT_RELEVANT = /주택|부동산|아파트|전세|월세|임대|분양|청약|공급|택지|재건축|재개발|정비사업|공시가격|실거래|주거|입주|신도시|리모델링|집값|LH/;
+const MOLIT_RELEVANT = /주택|부동산|아파트|전세|월세|임대|분양|청약|주택공급|공급대책|택지|재건축|재개발|정비사업|공시가격|실거래|주거|입주|신도시|리모델링|집값|LH/;
 
 async function pressMolit() {
   const queries = ['국토교통부 주택 site:korea.kr when:30d', '국토교통부 부동산 site:korea.kr when:30d', '국토교통부 아파트 공급 site:korea.kr when:30d'];
