@@ -116,7 +116,7 @@ module.exports = async (req, res) => {
       return;
     }
     for (const it of r.value) {
-      if (!it.url || !it.title) continue;
+      if (!it.url || !it.title || it.title === it.source) continue;
       const key = it.title.replace(/\s+/g, '').slice(0, 40);
       if (seen.has(key)) continue;
       seen.add(key);
