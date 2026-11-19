@@ -53,6 +53,9 @@
                 <button onclick="switchTab('news')" id="tab-btn-news" class="tab-btn py-3 px-4 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap transition">
                     <i class="fa-solid fa-newspaper"></i> 분야별 뉴스 & 해석
                 </button>
+                <button onclick="switchTab('public')" id="tab-btn-public" class="tab-btn py-3 px-4 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap transition">
+                    <i class="fa-solid fa-landmark"></i> 공공데이터 연동
+                </button>
             </div>
         </div>
     </header>
@@ -399,6 +402,60 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: Public Data -->
+        <section id="tab-public" class="tab-content hidden space-y-6">
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800">공공데이터 실시간 연동</h2>
+                    <p id="pd-status" class="text-xs text-slate-500">청약홈 · 국토교통부 · 행정안전부 · 공공데이터포털 자료를 불러오는 중…</p>
+                </div>
+                <button onclick="loadPublicData(true)" class="self-start sm:self-auto bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-3 py-1.5 rounded-lg font-medium transition">
+                    <i class="fa-solid fa-rotate-right mr-1"></i> 새로고침
+                </button>
+            </div>
+
+            <!-- Key setup notice (shown when DATA_GO_KR_KEY is missing) -->
+            <div id="pd-key-notice" class="hidden bg-amber-50 border border-amber-200 text-amber-900 p-4 rounded-xl text-sm space-y-2">
+                <p class="font-bold"><i class="fa-solid fa-key mr-1"></i> 청약홈·실거래가 데이터는 공공데이터포털 인증키를 넣으면 표시됩니다</p>
+                <ol class="list-decimal list-inside text-xs space-y-1 text-amber-800">
+                    <li>data.go.kr 로그인 → '한국부동산원_청약홈 분양정보 조회 서비스', '국토교통부_아파트 매매 실거래가 자료' 각각 활용신청 (개발계정 자동승인)</li>
+                    <li>마이페이지 → 개인 API 인증키(일반 인증키) 복사</li>
+                    <li>Vercel 프로젝트 → Settings → Environment Variables에 <code class="bg-white px-1 rounded">DATA_GO_KR_KEY</code> 로 저장 후 재배포</li>
+                </ol>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- 청약홈 -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col">
+                    <div class="flex items-center justify-between mb-1">
+                        <h3 class="text-sm font-bold text-slate-800"><i class="fa-solid fa-house-flag text-blue-500 mr-1"></i> 수도권 청약 일정 (청약홈)</h3>
+                        <span class="text-[11px] text-slate-400">한국부동산원</span>
+                    </div>
+                    <p id="cy-sub" class="text-xs text-slate-500 mb-3">최근 45일 모집공고 · 서울/경기/인천</p>
+                    <ul id="cy-list" class="divide-y divide-slate-100 text-sm flex-1"></ul>
+                </div>
+
+                <!-- 보도자료 -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-sm font-bold text-slate-800"><i class="fa-solid fa-bullhorn text-emerald-500 mr-1"></i> 정부 보도자료</h3>
+                        <div id="press-tabs" class="flex gap-1"></div>
+                    </div>
+                    <ul id="press-list" class="divide-y divide-slate-100 text-sm flex-1"></ul>
+                    <p id="press-origin" class="text-[11px] text-slate-400 mt-2"></p>
+                </div>
+            </div>
+
+            <!-- 국토부 실거래가 -->
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-3">
+                    <h3 class="text-sm font-bold text-slate-800"><i class="fa-solid fa-won-sign text-purple-500 mr-1"></i> 서울 25개 구 아파트 매매 실거래 (국토교통부)</h3>
+                    <span id="rt-sub" class="text-xs text-slate-500"></span>
+                </div>
+                <div id="rt-body" class="text-sm"></div>
             </div>
         </section>
 
@@ -792,6 +849,142 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadLiveNews(false);
             setInterval(() => loadLiveNews(false), 10 * 60 * 1000);
+        });
+
+        // ===== 공공데이터 (Vercel /api/public) =====
+        const publicData = { data: null, press: 'molit' };
+        const won = (manwon) => {
+            if (manwon == null) return '-';
+            const eok = Math.floor(manwon / 10000), rest = manwon % 10000;
+            return eok ? eok + '억' + (rest ? ' ' + rest.toLocaleString('ko-KR') : '') : rest.toLocaleString('ko-KR') + '만';
+        };
+        const ymLabel = (s) => s ? s.slice(0, 4) + '.' + s.slice(4) : '';
+
+        function linkOrText(text, url, cls) {
+            if (!url) return el('span', cls, text);
+            const a = el('a', cls + ' hover:text-blue-600 hover:underline', text);
+            a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+            return a;
+        }
+
+        function emptyRow(msg) { return el('li', 'py-6 text-center text-xs text-slate-400', msg); }
+
+        function sectionError(block) {
+            return block && block.error === 'NO_KEY' ? '인증키 설정 후 표시됩니다.' : '불러오지 못했습니다: ' + ((block && block.error) || '알 수 없는 오류');
+        }
+
+        function renderCheongyak(cy) {
+            const list = document.getElementById('cy-list');
+            if (!cy || !cy.ok) { list.replaceChildren(emptyRow(sectionError(cy))); return; }
+            if (!cy.items.length) { list.replaceChildren(emptyRow('최근 45일 수도권 모집공고가 없습니다.')); return; }
+            const badge = { '접수중': 'bg-red-50 text-red-600', '접수예정': 'bg-blue-50 text-blue-600', '접수마감': 'bg-slate-100 text-slate-500', '공고': 'bg-amber-50 text-amber-600' };
+            document.getElementById('cy-sub').textContent = cy.since + ' 이후 모집공고 · 서울/경기/인천 ' + cy.count + '건';
+            list.replaceChildren(...cy.items.slice(0, 12).map(it => {
+                const li = el('li', 'py-2.5 flex items-start gap-3');
+                li.appendChild(el('span', 'shrink-0 text-[11px] font-bold px-2 py-0.5 rounded-md mt-0.5 ' + (badge[it.status] || ''), it.status));
+                const body = el('div', 'min-w-0');
+                body.appendChild(linkOrText(it.name, it.url, 'font-semibold text-slate-800'));
+                body.appendChild(el('div', 'text-xs text-slate-500 mt-0.5',
+                    [it.region, it.households ? it.households.toLocaleString('ko-KR') + '세대' : null,
+                     it.receiptStart ? '접수 ' + it.receiptStart.slice(5) + '~' + (it.receiptEnd || '').slice(5) : null,
+                     it.winnerDate ? '발표 ' + it.winnerDate.slice(5) : null].filter(Boolean).join(' · ')));
+                li.appendChild(body);
+                return li;
+            }));
+        }
+
+        function renderPress() {
+            const d = publicData.data && publicData.data.press;
+            const tabs = document.getElementById('press-tabs');
+            tabs.replaceChildren(...[['molit', '국토교통부'], ['mois', '행정안전부']].map(([k, label]) => {
+                const b = el('button', 'text-[11px] px-2.5 py-1 rounded-full border ' + (publicData.press === k ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-600 border-slate-200'), label);
+                b.onclick = () => { publicData.press = k; renderPress(); };
+                return b;
+            }));
+            const block = d && d[publicData.press];
+            const list = document.getElementById('press-list');
+            const origin = document.getElementById('press-origin');
+            if (!block || !block.ok) { list.replaceChildren(emptyRow(sectionError(block))); origin.textContent = ''; return; }
+            origin.textContent = '출처: ' + block.origin + (publicData.press === 'mois' ? ' · 주민등록·인구·지방세·부동산 관련만 표시' : '');
+            if (!block.items.length) { list.replaceChildren(emptyRow('최근 보도자료가 없습니다.')); return; }
+            list.replaceChildren(...block.items.map(it => {
+                const li = el('li', 'py-2.5');
+                li.appendChild(linkOrText(it.title, it.url, 'font-medium text-slate-800 leading-snug'));
+                li.appendChild(el('div', 'text-xs text-slate-400 mt-0.5', [it.source, timeAgo(it.publishedAt)].filter(Boolean).join(' · ')));
+                return li;
+            }));
+        }
+
+        function renderTrades(rt) {
+            const body = document.getElementById('rt-body');
+            const sub = document.getElementById('rt-sub');
+            if (!rt || !rt.ok) { sub.textContent = ''; body.replaceChildren(el('p', 'py-6 text-center text-xs text-slate-400', sectionError(rt))); return; }
+            sub.textContent = ymLabel(rt.prevMonth) + ' ' + rt.totalPrev.toLocaleString('ko-KR') + '건 · ' + ymLabel(rt.thisMonth) + ' 신고분 ' + rt.totalCur.toLocaleString('ko-KR') + '건 (계약 후 30일 내 신고)';
+
+            const wrapEl = el('div', 'grid grid-cols-1 lg:grid-cols-3 gap-6');
+            // 구별 표
+            const tableBox = el('div', 'lg:col-span-2 overflow-x-auto');
+            const table = el('table', 'w-full text-xs');
+            const thead = el('thead');
+            const hr = el('tr', 'text-slate-500 border-b border-slate-200');
+            ['구', ymLabel(rt.prevMonth) + ' 거래', '당월 신고', '중위 거래가', '3.3㎡당 중위가'].forEach((h, i) => hr.appendChild(el('th', 'py-2 font-semibold ' + (i ? 'text-right' : 'text-left'), h)));
+            thead.appendChild(hr); table.appendChild(thead);
+            const tb = el('tbody');
+            const maxPP = Math.max(...rt.districts.map(d => d.medianPerPyeong || 0));
+            [...rt.districts].sort((a, b) => (b.medianPerPyeong || 0) - (a.medianPerPyeong || 0)).forEach(d => {
+                const tr = el('tr', 'border-b border-slate-50');
+                tr.appendChild(el('td', 'py-1.5 font-medium text-slate-700', d.name));
+                tr.appendChild(el('td', 'py-1.5 text-right', d.prevCount.toLocaleString('ko-KR')));
+                tr.appendChild(el('td', 'py-1.5 text-right text-slate-500', d.curCount.toLocaleString('ko-KR')));
+                tr.appendChild(el('td', 'py-1.5 text-right', won(d.medianPrice)));
+                const td = el('td', 'py-1.5 text-right');
+                const barWrap = el('div', 'flex items-center justify-end gap-2');
+                const bar = el('div', 'h-1.5 bg-purple-400 rounded-full');
+                bar.style.width = (maxPP ? Math.round((d.medianPerPyeong || 0) / maxPP * 60) : 0) + 'px';
+                barWrap.appendChild(bar);
+                barWrap.appendChild(el('span', 'w-16', d.medianPerPyeong ? won(d.medianPerPyeong) : '-'));
+                td.appendChild(barWrap); tr.appendChild(td);
+                tb.appendChild(tr);
+            });
+            table.appendChild(tb); tableBox.appendChild(table);
+            wrapEl.appendChild(tableBox);
+
+            // 최고가 거래
+            const side = el('div');
+            side.appendChild(el('h4', 'text-xs font-bold text-slate-700 mb-2', '최고가 거래 TOP 10'));
+            const ul = el('ul', 'space-y-2');
+            rt.top.forEach((t, i) => {
+                const li = el('li', 'text-xs');
+                li.appendChild(el('div', 'font-semibold text-slate-800', (i + 1) + '. ' + t.apt + ' ' + won(t.price)));
+                li.appendChild(el('div', 'text-slate-400', [t.gu + ' ' + t.dong, t.area ? Math.round(t.area) + '㎡' : null, t.floor ? t.floor + '층' : null, t.date].filter(Boolean).join(' · ')));
+                ul.appendChild(li);
+            });
+            side.appendChild(ul);
+            wrapEl.appendChild(side);
+            body.replaceChildren(wrapEl);
+        }
+
+        async function loadPublicData(manual) {
+            const status = document.getElementById('pd-status');
+            try {
+                const r = await fetch('/api/public', { cache: manual ? 'no-store' : 'default' });
+                const data = await r.json();
+                publicData.data = data;
+                document.getElementById('pd-key-notice').classList.toggle('hidden', data.keyConfigured);
+                status.textContent = '업데이트 ' + new Date(data.updatedAt).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) +
+                    ' · 30분마다 갱신 · 출처: 한국부동산원 청약홈, 국토교통부, 행정안전부, 공공데이터포털';
+                renderCheongyak(data.cheongyak);
+                renderTrades(data.realTrades);
+                renderPress();
+                if (manual) alertAction('공공데이터를 새로 불러왔습니다.');
+            } catch (e) {
+                status.textContent = '공공데이터를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPublicData(false);
+            setInterval(() => loadPublicData(false), 30 * 60 * 1000);
         });
     </script>
 </body>
