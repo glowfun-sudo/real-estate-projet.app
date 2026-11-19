@@ -300,6 +300,24 @@
                 <p class="text-xs text-slate-500">수도권 주택시장의 구조적 변화 배경과 언론 보도 원문 요약</p>
             </div>
 
+            <!-- Live News Feed -->
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                            <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span> 실시간 주요 뉴스
+                        </h3>
+                        <p id="live-news-status" class="text-xs text-slate-500">뉴스를 불러오는 중…</p>
+                    </div>
+                    <button onclick="loadLiveNews(true)" class="self-start sm:self-auto bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-3 py-1.5 rounded-lg font-medium transition">
+                        <i class="fa-solid fa-rotate-right mr-1"></i> 새로고침
+                    </button>
+                </div>
+                <div id="live-news-filters" class="flex flex-wrap gap-2"></div>
+                <ul id="live-news-list" class="divide-y divide-slate-100"></ul>
+                <p class="text-[11px] text-slate-400">출처: Google 뉴스 RSS(한국부동산원·주요 언론 검색)<span id="live-news-naver"></span> · 10분마다 자동 갱신 · 제목을 누르면 원문 기사로 이동합니다.</p>
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- News Column -->
                 <div class="lg:col-span-2 space-y-4">
@@ -691,6 +709,90 @@
         function resetCharts() {
             alertAction('모든 차트 데이터가 최신 버전으로 갱신되었습니다.');
         }
+
+        // ===== 실시간 뉴스 (Vercel /api/news) =====
+        const liveNews = { items: [], filter: 'all' };
+        const NEWS_COLORS = {
+            reb: 'bg-blue-50 text-blue-600', naver: 'bg-green-50 text-green-700',
+            market: 'bg-indigo-50 text-indigo-600', finance: 'bg-purple-50 text-purple-600',
+            rent: 'bg-emerald-50 text-emerald-600', supply: 'bg-amber-50 text-amber-600'
+        };
+
+        function timeAgo(iso) {
+            if (!iso) return '';
+            const diff = (Date.now() - new Date(iso).getTime()) / 60000;
+            if (diff < 1) return '방금 전';
+            if (diff < 60) return Math.floor(diff) + '분 전';
+            if (diff < 1440) return Math.floor(diff / 60) + '시간 전';
+            return Math.floor(diff / 1440) + '일 전';
+        }
+
+        function el(tagName, className, text) {
+            const node = document.createElement(tagName);
+            if (className) node.className = className;
+            if (text != null) node.textContent = text;
+            return node;
+        }
+
+        function renderNewsFilters() {
+            const box = document.getElementById('live-news-filters');
+            const cats = [['all', '전체']];
+            liveNews.items.forEach(it => {
+                if (!cats.some(c => c[0] === it.category)) cats.push([it.category, it.categoryLabel]);
+            });
+            box.replaceChildren(...cats.map(([key, label]) => {
+                const active = liveNews.filter === key;
+                const b = el('button', 'text-xs px-3 py-1 rounded-full border transition ' +
+                    (active ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-600 border-slate-200 hover:border-slate-400'),
+                    label + (key === 'all' ? '' : ' ' + liveNews.items.filter(i => i.category === key).length));
+                b.onclick = () => { liveNews.filter = key; renderNewsFilters(); renderNewsList(); };
+                return b;
+            }));
+        }
+
+        function renderNewsList() {
+            const list = document.getElementById('live-news-list');
+            const items = liveNews.items.filter(i => liveNews.filter === 'all' || i.category === liveNews.filter).slice(0, 20);
+            if (!items.length) {
+                list.replaceChildren(el('li', 'py-6 text-center text-sm text-slate-400', '표시할 뉴스가 없습니다.'));
+                return;
+            }
+            list.replaceChildren(...items.map(it => {
+                const li = el('li', 'py-3 flex items-start gap-3');
+                li.appendChild(el('span', 'shrink-0 text-[11px] font-bold px-2 py-0.5 rounded-md mt-0.5 ' + (NEWS_COLORS[it.category] || 'bg-slate-100 text-slate-600'), it.categoryLabel));
+                const body = el('div', 'min-w-0');
+                const a = el('a', 'text-sm font-semibold text-slate-800 hover:text-blue-600 hover:underline leading-snug', it.title);
+                a.href = it.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+                body.appendChild(a);
+                body.appendChild(el('div', 'text-xs text-slate-400 mt-0.5', it.source + ' · ' + timeAgo(it.publishedAt)));
+                li.appendChild(body);
+                return li;
+            }));
+        }
+
+        async function loadLiveNews(manual) {
+            const status = document.getElementById('live-news-status');
+            try {
+                const r = await fetch('/api/news', { cache: manual ? 'no-store' : 'default' });
+                const data = await r.json();
+                if (!data.items || !data.items.length) throw new Error('empty');
+                liveNews.items = data.items;
+                status.textContent = '최근 7일 · ' + data.count + '건 · 업데이트 ' +
+                    new Date(data.updatedAt).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+                document.getElementById('live-news-naver').textContent = data.naverEnabled ? ', 네이버 뉴스 검색 API' : '';
+                renderNewsFilters();
+                renderNewsList();
+                if (manual) alertAction('실시간 뉴스를 새로 불러왔습니다.');
+            } catch (e) {
+                status.textContent = '실시간 뉴스를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.';
+                if (!liveNews.items.length) renderNewsList();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadLiveNews(false);
+            setInterval(() => loadLiveNews(false), 10 * 60 * 1000);
+        });
     </script>
 </body>
 </html>
