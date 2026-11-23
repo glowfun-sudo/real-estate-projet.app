@@ -302,6 +302,32 @@
                 </div>
             </div>
 
+            <!-- 청약 경쟁률·당첨 가점 (청약홈 청약 신청·당첨자 정보) -->
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                    <h3 class="text-sm font-bold text-slate-800"><i class="fa-solid fa-trophy text-amber-500 mr-1"></i> 수도권 청약 경쟁률 · 당첨 가점 (청약홈)</h3>
+                    <span id="ap-sub" class="text-xs text-slate-500">불러오는 중…</span>
+                </div>
+                <div id="ap-msg" class="hidden py-6 text-center text-xs text-slate-400"></div>
+                <div id="ap-body" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-700 mb-2">월별 일반공급 경쟁률 (신청 ÷ 공급)</h4>
+                        <div class="relative h-56"><canvas id="ap-chart1"></canvas></div>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-700 mb-2">가점제 당첨자 평균 가점 (해당지역)</h4>
+                        <div class="relative h-56"><canvas id="ap-chart2"></canvas></div>
+                        <div id="ap-scores" class="mt-2 grid grid-cols-3 gap-2 text-[11px]"></div>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-700 mb-2">연령대별 신청자 · 당첨자 (수도권, 최근 12개월)</h4>
+                        <div class="relative h-56"><canvas id="ap-chart3"></canvas></div>
+                    </div>
+                </div>
+                <p id="ap-rank" class="text-xs text-slate-500"></p>
+                <p class="text-[11px] text-slate-400">출처: 한국부동산원 청약홈 청약 신청·당첨자 정보 조회 서비스 (공공데이터포털) · 월 단위 통계, 공표까지 몇 달 걸림 · 12시간마다 갱신</p>
+            </div>
+
             <!-- 국토부 실거래가 -->
             <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-3">
@@ -422,6 +448,52 @@
                 setTimeout(() => alertBox.classList.add('hidden'), 300);
             }, 3000);
         }
+
+        // ===== 청약 경쟁률·당첨 가점 (Vercel /api/applystat) =====
+        const apCharts = {};
+        function apDraw(id, cfg) {
+            if (typeof Chart === 'undefined') return;
+            if (apCharts[id]) apCharts[id].destroy();
+            cfg.options = Object.assign({ responsive: true, maintainAspectRatio: false }, cfg.options || {});
+            apCharts[id] = new Chart(document.getElementById(id).getContext('2d'), cfg);
+        }
+        async function loadApplyStat() {
+            const sub = document.getElementById('ap-sub'), msg = document.getElementById('ap-msg'), body = document.getElementById('ap-body');
+            try {
+                const d = await (await fetch('/api/applystat')).json();
+                if (!d.ok) {
+                    body.classList.add('hidden'); msg.classList.remove('hidden');
+                    msg.textContent = d.error === 'NO_KEY' ? '인증키 설정 후 표시됩니다.' : '불러오지 못했습니다: ' + d.error;
+                    sub.textContent = ''; return;
+                }
+                const lab = (m) => m.slice(2, 4) + '.' + m.slice(4);
+                const L = d.months.map(lab);
+                const col = { 서울: '#3b82f6', 경기: '#10b981', 인천: '#f59e0b' };
+                const lastIdx = d.months.length - 1;
+                sub.textContent = '최신 통계월 ' + d.latest.slice(0, 4) + '년 ' + Number(d.latest.slice(4)) + '월 · 최근 12개월';
+                apDraw('ap-chart1', { type: 'line', data: { labels: L, datasets: d.competition.map((r) => ({ label: r.name, data: r.values, borderColor: col[r.name], backgroundColor: col[r.name], tension: 0.3, spanGaps: true })) },
+                    options: { scales: { y: { ticks: { callback: (v) => v + ':1' } } }, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } },
+                        tooltip: { callbacks: { label: (c) => { const r = d.competition[c.datasetIndex]; return r.name + ' ' + c.parsed.y + ':1 (공급 ' + r.supply[c.dataIndex].toLocaleString('ko-KR') + '세대, 신청 ' + r.requests[c.dataIndex].toLocaleString('ko-KR') + '건)'; } } } } } });
+                apDraw('ap-chart2', { type: 'line', data: { labels: d.apsMonths.map(lab), datasets: d.scores.map((r) => ({ label: r.name, data: r.avg, borderColor: col[r.name], backgroundColor: col[r.name], tension: 0.3, spanGaps: true })) },
+                    options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } }, tooltip: { callbacks: { label: (c) => c.dataset.label + ' 평균 ' + c.parsed.y + '점' } } } } });
+                document.getElementById('ap-scores').replaceChildren(...d.scoreLatest.map((r) => {
+                    const box = el('div', 'bg-slate-50 rounded-lg p-2 border border-slate-100');
+                    box.appendChild(el('div', 'font-bold text-slate-700', r.name + (r.month ? ' (' + lab(r.month) + ')' : '')));
+                    box.appendChild(el('div', 'text-slate-500', r.month ? '평균 ' + r.avg + ' · 최저 ' + r.lowest + ' · 최고 ' + r.top : '자료 없음'));
+                    return box;
+                }));
+                apDraw('ap-chart3', { type: 'bar', data: { labels: d.ages.labels, datasets: [
+                    { label: '신청자', data: d.ages.applicants, backgroundColor: '#94a3b8' },
+                    { label: '당첨자', data: d.ages.winners, backgroundColor: '#8b5cf6' }] },
+                    options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } }, tooltip: { callbacks: { label: (c) => c.dataset.label + ' ' + c.parsed.y.toLocaleString('ko-KR') + '명' } } } } });
+                const top = d.regionRank.slice(0, 5).map((r) => r.name + ' ' + r.rate + ':1').join(' · ');
+                document.getElementById('ap-rank').textContent = '최근 12개월 전국 일반공급 경쟁률 상위: ' + top;
+            } catch (e) {
+                body.classList.add('hidden'); msg.classList.remove('hidden');
+                msg.textContent = '청약 통계를 불러오지 못했습니다.'; sub.textContent = '';
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => loadApplyStat());
 
         // ===== 시장 차트 8선 (Vercel /api/charts, 실시간 공공데이터) =====
         const liveCharts = {};
