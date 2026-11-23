@@ -591,6 +591,35 @@
             }
         }
 
+        // 7번 차트: 전세가율 (전세 3.3㎡당 중위 보증금 ÷ 매매 3.3㎡당 중위가) — /api/rent
+        async function loadJeonse(d, manual) {
+            const t = d.trades;
+            const L = d.monthLabels, last = L.length - 1, prevIdx = last - 1;
+            const SRC_RENT = '출처: 국토교통부 아파트 전월세·매매 실거래가 (공공데이터포털) · 서울 25개 구, 전세는 월세 0원 계약';
+            if (!liveCharts[7]) { setCard(7, '서울 아파트 전세가율 추이', '전월세 실거래가를 불러오는 중… (처음엔 30초 정도 걸릴 수 있습니다)', SRC_RENT); cardMsg(7, '전월세 실거래가를 불러오는 중…'); }
+            try {
+                const r = await (await fetch('/api/rent', { cache: manual ? 'no-store' : 'default' })).json();
+                if (!r.ok) throw new Error(r.error);
+                const ratio = r.jeonsePerPyeong.map((v, i) => (v && t && t.ok && t.ppSeries[i]) ? Math.round((v / t.ppSeries[i]) * 1000) / 10 : null);
+                setCard(7, '서울 아파트 전세가율 추이',
+                    L[prevIdx] + ' 전세가율 ' + (ratio[prevIdx] ?? '-') + '% · 전세 3.3㎡당 ' + manwon(r.jeonsePerPyeong[prevIdx]) + ' · 월세 비중 ' + (r.wolseShare[prevIdx] ?? '-') + '% · 점선은 ' + L[last] + ' 신고 진행 중', SRC_RENT);
+                draw(7, { type: 'bar', data: { labels: L, datasets: [
+                    { type: 'line', label: '전세가율(%)', data: ratio, borderColor: COLORS.cyan, backgroundColor: COLORS.cyan, tension: 0.3, yAxisID: 'y1',
+                      segment: { borderDash: (c) => c.p1DataIndex === last ? [5, 5] : undefined } },
+                    { type: 'bar', label: '전세 3.3㎡당 중위 보증금(만원)', data: r.jeonsePerPyeong, backgroundColor: L.map((_, i) => i === last ? 'rgba(6,182,212,0.2)' : 'rgba(6,182,212,0.45)'), yAxisID: 'y' }] },
+                    options: { scales: { y: { position: 'left', beginAtZero: true }, y1: { position: 'right', grid: { drawOnChartArea: false }, ticks: { callback: (v) => v + '%' } } },
+                        plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } },
+                            tooltip: { callbacks: { label: (c) => c.datasetIndex === 0 ? '전세가율 ' + c.parsed.y + '%' : '전세 3.3㎡당 ' + manwon(c.parsed.y) + ' (전세 ' + r.jeonseCount[c.dataIndex].toLocaleString('ko-KR') + '건)' } } } } });
+            } catch (e) {
+                // 전월세 자료를 못 받으면 면적대별 비중으로 대신 표시
+                if (t && t.ok) {
+                    setCard(7, '전용면적대별 거래 비중 (' + L[prevIdx] + ')', '전세가율을 불러오지 못해 대신 표시: ' + (e.message || ''), SRC_RTMS);
+                    draw(7, { type: 'doughnut', data: { labels: t.areaBands.map((b) => b.label), datasets: [{ data: t.areaBands.map((b) => b.share), backgroundColor: [COLORS.cyan, COLORS.blue, COLORS.indigo, COLORS.violet] }] },
+                        options: { plugins: { legend: { position: 'right', labels: { boxWidth: 10, font: { size: 11 } } } } } });
+                } else cardMsg(7, '전월세 실거래가를 불러오지 못했습니다.');
+            }
+        }
+
         async function loadCharts(manual) {
             const status = document.getElementById('charts-status');
             if (manual) status.textContent = '최신 데이터를 확인하는 중…';
@@ -603,6 +632,7 @@
                     return;
                 }
                 renderLiveCharts(d);
+                loadJeonse(d, manual);
                 const t = d.trades;
                 status.textContent = '데이터 기준 ' + new Date(d.updatedAt).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) +
                     ' · 최근 6개월(' + d.monthLabels[0] + '~' + d.monthLabels[d.monthLabels.length - 1] + ') · 6시간마다 갱신' +
