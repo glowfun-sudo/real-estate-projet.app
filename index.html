@@ -44,10 +44,7 @@
         <!-- Tab Navigation Bar (3 Clean Tabs) -->
         <div class="bg-slate-800/90 border-t border-slate-700">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-1 sm:space-x-4 overflow-x-auto no-scrollbar">
-                <button onclick="switchTab('metrics')" id="tab-btn-metrics" class="tab-btn py-3 px-4 text-xs sm:text-sm font-semibold border-b-2 border-blue-500 text-white flex items-center gap-2 whitespace-nowrap transition">
-                    <i class="fa-solid fa-table-cells"></i> 핵심 지표 8선
-                </button>
-                <button onclick="switchTab('charts')" id="tab-btn-charts" class="tab-btn py-3 px-4 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap transition">
+                <button onclick="switchTab('charts')" id="tab-btn-charts" class="tab-btn py-3 px-4 text-xs sm:text-sm font-semibold border-b-2 border-blue-500 text-white flex items-center gap-2 whitespace-nowrap transition">
                     <i class="fa-solid fa-chart-line"></i> 시장 차트 8선
                 </button>
                 <button onclick="switchTab('news')" id="tab-btn-news" class="tab-btn py-3 px-4 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap transition">
@@ -63,235 +60,91 @@
     <!-- Main Content Container -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 overflow-y-auto">
 
-        <!-- TAB 1: Core Metrics -->
-        <section id="tab-metrics" class="tab-content space-y-6">
-            <!-- Filter Bar -->
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4">
-                <div class="flex items-center space-x-2 w-full sm:w-auto">
-                    <i class="fa-solid fa-filter text-slate-400"></i>
-                    <span class="text-sm font-medium text-slate-700">부문별 필터:</span>
-                    <select id="metric-filter" onchange="filterMetrics()" class="bg-slate-50 border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2">
-                        <option value="all">전체 보기 (8선)</option>
-                        <option value="price">매매가격 및 변동률</option>
-                        <option value="supply">거래량 및 매물·입주</option>
-                        <option value="finance">금융 및 주택담보대출</option>
-                        <option value="policy">인허가 및 공급지표</option>
-                    </select>
-                </div>
-                <div class="text-xs text-slate-500 flex items-center gap-2">
-                    <i class="fa-solid fa-circle-info text-blue-500"></i> 지표 카드를 클릭하면 상세 분석 모달이 열립니다.
-                </div>
-            </div>
-
-            <!-- Metrics Grid -->
-            <div id="metrics-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Card 1 -->
-                <div onclick="openMetricDetail(1)" data-category="price" class="metric-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-300 transition cursor-pointer flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 bg-blue-50 text-blue-600 rounded-md">매매가격</span>
-                            <span class="text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-1 rounded">상승폭 축소</span>
-                        </div>
-                        <h3 class="font-bold text-slate-800 text-base mb-1">수도권 아파트 매매가격 변동률</h3>
-                        <p class="text-2xl font-extrabold text-blue-600 my-2">+0.7% <span class="text-xs font-normal text-slate-500">내외 둔화</span></p>
-                    </div>
-                    <div class="text-xs text-slate-500 pt-3 border-t border-slate-100 flex items-center justify-between">
-                        <span>전주 대비 과열 완화</span>
-                        <i class="fa-solid fa-arrow-right text-blue-500"></i>
-                    </div>
-                </div>
-
-                <!-- Card 2 -->
-                <div onclick="openMetricDetail(2)" data-category="supply" class="metric-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-300 transition cursor-pointer flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 bg-indigo-50 text-indigo-600 rounded-md">거래량</span>
-                            <span class="text-xs font-semibold text-red-600 bg-red-50 px-2 py-1 rounded">감소세 지속</span>
-                        </div>
-                        <h3 class="font-bold text-slate-800 text-base mb-1">서울 아파트 매매거래량</h3>
-                        <p class="text-2xl font-extrabold text-slate-900 my-2">약 3,900건 <span class="text-xs font-normal text-slate-500">/월</span></p>
-                    </div>
-                    <div class="text-xs text-slate-500 pt-3 border-t border-slate-100 flex items-center justify-between">
-                        <span>평년(4,100건) 하회</span>
-                        <i class="fa-solid fa-arrow-right text-blue-500"></i>
-                    </div>
-                </div>
-
-                <!-- Card 3 -->
-                <div onclick="openMetricDetail(3)" data-category="supply" class="metric-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-300 transition cursor-pointer flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 bg-indigo-50 text-indigo-600 rounded-md">매물</span>
-                            <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded">매물 급증</span>
-                        </div>
-                        <h3 class="font-bold text-slate-800 text-base mb-1">수도권 아파트 매물 건수</h3>
-                        <p class="text-2xl font-extrabold text-blue-600 my-2">8만 건 <span class="text-xs font-normal text-slate-500">돌파</span></p>
-                    </div>
-                    <div class="text-xs text-slate-500 pt-3 border-t border-slate-100 flex items-center justify-between">
-                        <span>연초 대비 +40% 이상</span>
-                        <i class="fa-solid fa-arrow-right text-blue-500"></i>
-                    </div>
-                </div>
-
-                <!-- Card 4 -->
-                <div onclick="openMetricDetail(4)" data-category="supply" class="metric-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-300 transition cursor-pointer flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 bg-indigo-50 text-indigo-600 rounded-md">입주물량</span>
-                            <span class="text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-1 rounded">공급 압력</span>
-                        </div>
-                        <h3 class="font-bold text-slate-800 text-base mb-1">수도권 입주 예정 물량</h3>
-                        <p class="text-2xl font-extrabold text-slate-900 my-2">4만 호 <span class="text-xs font-normal text-slate-500">이상 대기</span></p>
-                    </div>
-                    <div class="text-xs text-slate-500 pt-3 border-t border-slate-100 flex items-center justify-between">
-                        <span>내년 1분기까지 집중</span>
-                        <i class="fa-solid fa-arrow-right text-blue-500"></i>
-                    </div>
-                </div>
-
-                <!-- Card 5 -->
-                <div onclick="openMetricDetail(5)" data-category="finance" class="metric-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-300 transition cursor-pointer flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 bg-purple-50 text-purple-600 rounded-md">금융·대출</span>
-                            <span class="text-xs font-semibold text-purple-600 bg-purple-50 px-2 py-1 rounded">안정세</span>
-                        </div>
-                        <h3 class="font-bold text-slate-800 text-base mb-1">주택담보대출 금리 동향</h3>
-                        <p class="text-2xl font-extrabold text-purple-600 my-2">연 3.8% ~ 4.4%</p>
-                    </div>
-                    <div class="text-xs text-slate-500 pt-3 border-t border-slate-100 flex items-center justify-between">
-                        <span>시중은행 혼합형 기준</span>
-                        <i class="fa-solid fa-arrow-right text-blue-500"></i>
-                    </div>
-                </div>
-
-                <!-- Card 6 -->
-                <div onclick="openMetricDetail(6)" data-category="finance" class="metric-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-300 transition cursor-pointer flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 bg-purple-50 text-purple-600 rounded-md">금융·대출</span>
-                            <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded">가계부채 관리</span>
-                        </div>
-                        <h3 class="font-bold text-slate-800 text-base mb-1">가계 주택대출 증가 속도</h3>
-                        <p class="text-xl font-extrabold text-slate-900 my-2">전월 대비 완화</p>
-                    </div>
-                    <div class="text-xs text-slate-500 pt-3 border-t border-slate-100 flex items-center justify-between">
-                        <span>스트레스 DSR 2단계 적용</span>
-                        <i class="fa-solid fa-arrow-right text-blue-500"></i>
-                    </div>
-                </div>
-
-                <!-- Card 7 -->
-                <div onclick="openMetricDetail(7)" data-category="policy" class="metric-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-300 transition cursor-pointer flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 bg-emerald-50 text-emerald-600 rounded-md">전월세</span>
-                            <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">상승세 지속</span>
-                        </div>
-                        <h3 class="font-bold text-slate-800 text-base mb-1">수도권 아파트 전세가격 변동률</h3>
-                        <p class="text-xl font-extrabold text-emerald-600 my-2">+0.4% <span class="text-xs font-normal text-slate-500">안정적 우상향</span></p>
-                    </div>
-                    <div class="text-xs text-slate-500 pt-3 border-t border-slate-100 flex items-center justify-between">
-                        <span>역세권 선호 현상 뚜렷</span>
-                        <i class="fa-solid fa-arrow-right text-blue-500"></i>
-                    </div>
-                </div>
-
-                <!-- Card 8 -->
-                <div onclick="openMetricDetail(8)" data-category="policy" class="metric-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-300 transition cursor-pointer flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 bg-amber-50 text-amber-600 rounded-md">인허가</span>
-                            <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">공급 회복</span>
-                        </div>
-                        <h3 class="font-bold text-slate-800 text-base mb-1">수도권 주택 인허가 및 착공</h3>
-                        <p class="text-2xl font-extrabold text-emerald-600 my-2">전년비 +33% 증가</p>
-                    </div>
-                    <div class="text-xs text-slate-500 pt-3 border-t border-slate-100 flex items-center justify-between">
-                        <span>주택 공급 지표 반등세</span>
-                        <i class="fa-solid fa-arrow-right text-blue-500"></i>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- TAB 2: Market Charts -->
-        <section id="tab-charts" class="tab-content hidden space-y-6">
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center">
+        <!-- TAB 1: Market Charts (live) -->
+        <section id="tab-charts" class="tab-content space-y-6">
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                    <h2 class="text-lg font-bold text-slate-800">핵심 시장 데이터 시각화 (8선)</h2>
-                    <p class="text-xs text-slate-500">수도권 아파트 시장 흐름 파악을 위한 주요 시계열 데이터 분석</p>
+                    <h2 class="text-lg font-bold text-slate-800">시장 차트 8선 <span class="ml-1 align-middle text-[11px] font-semibold px-2 py-0.5 rounded-full bg-red-50 text-red-600">실시간 공공데이터</span></h2>
+                    <p id="charts-status" class="text-xs text-slate-500">국토교통부 실거래가 · 청약홈 데이터를 불러오는 중… (처음 한 번은 20~30초 걸릴 수 있습니다)</p>
                 </div>
-                <button onclick="resetCharts()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-3 py-1.5 rounded-lg font-medium transition">
+                <button onclick="loadCharts(true)" class="self-start sm:self-auto bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-3 py-1.5 rounded-lg font-medium transition">
                     <i class="fa-solid fa-rotate-right mr-1"></i> 차트 새로고침
                 </button>
             </div>
 
             <!-- Charts Grid (2x4 layout for 8 charts) -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Chart 1 -->
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col">
-                    <h3 class="text-sm font-bold text-slate-800 mb-1">1. 서울 아파트 매매가격 변동률 추이</h3>
-                    <p class="text-xs text-slate-500 mb-4">상승폭 둔화 및 상급지 디커플링 국면</p>
+                    <h3 id="ch1-title" class="text-sm font-bold text-slate-800 mb-1">1. 불러오는 중…</h3>
+                    <p id="ch1-sub" class="text-xs text-slate-500 mb-4">&nbsp;</p>
                     <div class="relative flex-1 h-64">
                         <canvas id="chart1"></canvas>
+                        <div id="ch1-msg" class="absolute inset-0 flex items-center justify-center text-xs text-slate-400 text-center px-6">데이터를 불러오는 중…</div>
                     </div>
+                    <p id="ch1-src" class="text-[11px] text-slate-400 mt-3"></p>
                 </div>
-                <!-- Chart 2 -->
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col">
-                    <h3 class="text-sm font-bold text-slate-800 mb-1">2. 서울 주택 매매거래량 회전율</h3>
-                    <p class="text-xs text-slate-500 mb-4">평년 수준을 밑도는 실수요 관망세</p>
+                    <h3 id="ch2-title" class="text-sm font-bold text-slate-800 mb-1">2. 불러오는 중…</h3>
+                    <p id="ch2-sub" class="text-xs text-slate-500 mb-4">&nbsp;</p>
                     <div class="relative flex-1 h-64">
                         <canvas id="chart2"></canvas>
+                        <div id="ch2-msg" class="absolute inset-0 flex items-center justify-center text-xs text-slate-400 text-center px-6">데이터를 불러오는 중…</div>
                     </div>
+                    <p id="ch2-src" class="text-[11px] text-slate-400 mt-3"></p>
                 </div>
-                <!-- Chart 3 -->
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col">
-                    <h3 class="text-sm font-bold text-slate-800 mb-1">3. 수도권 매매 매물 적체량 곡선</h3>
-                    <p class="text-xs text-slate-500 mb-4">연초 대비 매물 +40% 이상 급증 추이</p>
+                    <h3 id="ch3-title" class="text-sm font-bold text-slate-800 mb-1">3. 불러오는 중…</h3>
+                    <p id="ch3-sub" class="text-xs text-slate-500 mb-4">&nbsp;</p>
                     <div class="relative flex-1 h-64">
                         <canvas id="chart3"></canvas>
+                        <div id="ch3-msg" class="absolute inset-0 flex items-center justify-center text-xs text-slate-400 text-center px-6">데이터를 불러오는 중…</div>
                     </div>
+                    <p id="ch3-src" class="text-[11px] text-slate-400 mt-3"></p>
                 </div>
-                <!-- Chart 4 -->
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col">
-                    <h3 class="text-sm font-bold text-slate-800 mb-1">4. 수도권 입주물량 타임라인 (Q4~Q1)</h3>
-                    <p class="text-xs text-slate-500 mb-4">내년 1분기까지 입주 스파이크 집중</p>
+                    <h3 id="ch4-title" class="text-sm font-bold text-slate-800 mb-1">4. 불러오는 중…</h3>
+                    <p id="ch4-sub" class="text-xs text-slate-500 mb-4">&nbsp;</p>
                     <div class="relative flex-1 h-64">
                         <canvas id="chart4"></canvas>
+                        <div id="ch4-msg" class="absolute inset-0 flex items-center justify-center text-xs text-slate-400 text-center px-6">데이터를 불러오는 중…</div>
                     </div>
+                    <p id="ch4-src" class="text-[11px] text-slate-400 mt-3"></p>
                 </div>
-                <!-- Chart 5 -->
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col">
-                    <h3 class="text-sm font-bold text-slate-800 mb-1">5. 주택담보대출 금리 추이 (혼합형)</h3>
-                    <p class="text-xs text-slate-500 mb-4">시중금리 하향 안정세 반영</p>
+                    <h3 id="ch5-title" class="text-sm font-bold text-slate-800 mb-1">5. 불러오는 중…</h3>
+                    <p id="ch5-sub" class="text-xs text-slate-500 mb-4">&nbsp;</p>
                     <div class="relative flex-1 h-64">
                         <canvas id="chart5"></canvas>
+                        <div id="ch5-msg" class="absolute inset-0 flex items-center justify-center text-xs text-slate-400 text-center px-6">데이터를 불러오는 중…</div>
                     </div>
+                    <p id="ch5-src" class="text-[11px] text-slate-400 mt-3"></p>
                 </div>
-                <!-- Chart 6 -->
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col">
-                    <h3 class="text-sm font-bold text-slate-800 mb-1">6. 서울 vs 경기·인천 아파트 매매가 비교</h3>
-                    <p class="text-xs text-slate-500 mb-4">권역별 가격 격차 및 추이</p>
+                    <h3 id="ch6-title" class="text-sm font-bold text-slate-800 mb-1">6. 불러오는 중…</h3>
+                    <p id="ch6-sub" class="text-xs text-slate-500 mb-4">&nbsp;</p>
                     <div class="relative flex-1 h-64">
                         <canvas id="chart6"></canvas>
+                        <div id="ch6-msg" class="absolute inset-0 flex items-center justify-center text-xs text-slate-400 text-center px-6">데이터를 불러오는 중…</div>
                     </div>
+                    <p id="ch6-src" class="text-[11px] text-slate-400 mt-3"></p>
                 </div>
-                <!-- Chart 7 -->
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col">
-                    <h3 class="text-sm font-bold text-slate-800 mb-1">7. 수도권 아파트 전세가율 변화</h3>
-                    <p class="text-xs text-slate-500 mb-4">실수요 중심 전세 수요 증가에 따른 반등</p>
+                    <h3 id="ch7-title" class="text-sm font-bold text-slate-800 mb-1">7. 불러오는 중…</h3>
+                    <p id="ch7-sub" class="text-xs text-slate-500 mb-4">&nbsp;</p>
                     <div class="relative flex-1 h-64">
                         <canvas id="chart7"></canvas>
+                        <div id="ch7-msg" class="absolute inset-0 flex items-center justify-center text-xs text-slate-400 text-center px-6">데이터를 불러오는 중…</div>
                     </div>
+                    <p id="ch7-src" class="text-[11px] text-slate-400 mt-3"></p>
                 </div>
-                <!-- Chart 8 -->
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col">
-                    <h3 class="text-sm font-bold text-slate-800 mb-1">8. 주택 인허가 및 착공 물량 회복세</h3>
-                    <p class="text-xs text-slate-500 mb-4">수도권 주택 인허가 지수 확대 시그널</p>
+                    <h3 id="ch8-title" class="text-sm font-bold text-slate-800 mb-1">8. 불러오는 중…</h3>
+                    <p id="ch8-sub" class="text-xs text-slate-500 mb-4">&nbsp;</p>
                     <div class="relative flex-1 h-64">
                         <canvas id="chart8"></canvas>
+                        <div id="ch8-msg" class="absolute inset-0 flex items-center justify-center text-xs text-slate-400 text-center px-6">데이터를 불러오는 중…</div>
                     </div>
+                    <p id="ch8-src" class="text-[11px] text-slate-400 mt-3"></p>
                 </div>
             </div>
         </section>
@@ -466,34 +319,6 @@
         <p>&copy; 2026 주간 수도권 아파트 시장. All rights reserved. | Weekly Market Briefing System</p>
     </footer>
 
-    <!-- Metric Detail Modal -->
-    <div id="metric-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 space-y-4">
-            <div class="flex justify-between items-start">
-                <div>
-                    <span id="modal-category" class="text-xs font-bold uppercase tracking-wider px-2 py-1 bg-blue-50 text-blue-600 rounded-md">카테고리</span>
-                    <h3 id="modal-title" class="text-lg font-bold text-slate-900 mt-2">지표 상세 분석</h3>
-                </div>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 p-1">
-                    <i class="fa-solid fa-xmark text-xl"></i>
-                </button>
-            </div>
-            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                <p class="text-xs text-slate-500 mb-1">현재 측정치 / 동향</p>
-                <p id="modal-value" class="text-2xl font-extrabold text-blue-600">-</p>
-            </div>
-            <div>
-                <h4 class="text-sm font-bold text-slate-800 mb-1">시장 시사점</h4>
-                <p id="modal-implication" class="text-sm text-slate-600 leading-relaxed">-</p>
-            </div>
-            <div class="pt-4 border-t border-slate-100 flex justify-end">
-                <button onclick="closeModal()" class="bg-slate-900 text-white text-sm px-4 py-2 rounded-lg font-medium hover:bg-slate-800 transition">
-                    확인 완료
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- News Modal -->
     <div id="news-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 space-y-4">
@@ -536,7 +361,7 @@
                     <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
                 </button>
                 <button onclick="alertAction('Excel 데이터 다운로드가 시작되었습니다.')" class="w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50 transition flex items-center justify-between">
-                    <span class="text-sm font-semibold text-slate-800"><i class="fa-solid fa-file-excel text-emerald-500 mr-2"></i> Excel 핵심 지표 및 차트 원본 데이터</span>
+                    <span class="text-sm font-semibold text-slate-800"><i class="fa-solid fa-file-excel text-emerald-500 mr-2"></i> Excel 차트 원본 데이터</span>
                     <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
                 </button>
             </div>
@@ -570,44 +395,6 @@
             activeBtn.classList.add('border-blue-500', 'text-white');
         }
 
-        // Filter Metrics
-        function filterMetrics() {
-            const val = document.getElementById('metric-filter').value;
-            const cards = document.querySelectorAll('.metric-card');
-            cards.forEach(card => {
-                if (val === 'all' || card.getAttribute('data-category') === val) {
-                    card.style.display = 'flex';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-
-        // Metric Modal Details Data
-        const metricData = {
-            1: { title: "수도권 아파트 매매가격 변동률", category: "매매가격", value: "상승세 둔화 (서울 +0.7% 내외)", implication: "강남 3구 및 일부 상급지 중심의 과열이 진정되며 관망세로 전환. 실수요자들은 보수적인 매수 접근 필요." },
-            2: { title: "서울 아파트 매매거래량", category: "거래량", value: "월 약 3,900건 수준", implication: "평년(4,100건)을 밑도는 거래 회전율. 매수·매도인 간 희망 가격 격차로 거래 대기 현상 지속." },
-            3: { title: "수도권 아파트 매물 건수", category: "매물", value: "서울 매물 8만 건 돌파 (+40%)", implication: "매수자 우위 시장으로 전환됨에 따라 매수 대기자들의 선택 폭이 넓어지고 있는 국면." },
-            4: { title: "수도권 입주 예정 물량", category: "입주물량", value: "내년 1분기까지 4만 호 이상", implication: "입주 스파이크에 따른 인근 전·월세가 하방 압력 발생. 주변 시세 안정화 요인으로 작용." },
-            5: { title: "주택담보대출 금리 동향", category: "금융·대출", value: "연 3.8% ~ 4.4% (혼합형)", implication: "시장 금리 하향 안정화 추이 반영. 대출 이자 부담이 소폭 경감되나 DSR 규제 영향 지속." },
-            6: { title: "가계 주택대출 증가 속도", category: "금융·대출", value: "전월 대비 증가세 완화", implication: "스트레스 DSR 2단계 도입 및 은행권 가계부채 관리로 무분별한 대출 수요가 진정됨." },
-            7: { title: "수도권 아파트 전세가격 변동률", category: "전월세", value: "+0.4% (안정적 우상향)", implication: "매매 시장 관망세로 전세 수요가 유지되며 역세권 및 중소형 평형 중심으로 완만한 상승세." },
-            8: { title: "수도권 주택 인허가 및 착공", category: "인허가", value: "전년 동기 대비 +33% 증가", implication: "중장기 주택 공급 부족 우려를 일부 해소하는 인허가 및 착공 지표 반등 시그널." }
-        };
-
-        function openMetricDetail(id) {
-            const data = metricData[id];
-            document.getElementById('modal-title').innerText = data.title;
-            document.getElementById('modal-category').innerText = data.category;
-            document.getElementById('modal-value').innerText = data.value;
-            document.getElementById('modal-implication').innerText = data.implication;
-            document.getElementById('metric-modal').classList.remove('hidden');
-        }
-
-        function closeModal() {
-            document.getElementById('metric-modal').classList.add('hidden');
-        }
-
         function openNewsModal(title) {
             document.getElementById('news-modal-title').innerText = title;
             document.getElementById('news-modal').classList.remove('hidden');
@@ -636,136 +423,129 @@
             }, 3000);
         }
 
-        // Initialize Chart.js 8 Charts
-        window.onload = function () {
-            // Chart 1: 서울 아파트 매매가격 변동률 추이
-            new Chart(document.getElementById('chart1').getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels: ['6월', '7월', '8월', '9월', '10월', '11월'],
-                    datasets: [{
-                        label: '변동률(%)',
-                        data: [1.2, 1.5, 1.1, 0.9, 0.8, 0.7],
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
+        // ===== 시장 차트 8선 (Vercel /api/charts, 실시간 공공데이터) =====
+        const liveCharts = {};
+        const SRC_RTMS = '출처: 국토교통부 아파트 매매 실거래가 상세 자료 (공공데이터포털) · 서울 25개 구, 해제 거래 제외';
+        const SRC_CY = '출처: 한국부동산원 청약홈 분양정보 (공공데이터포털) · 모집공고일 기준';
+        const COLORS = { blue: '#3b82f6', indigo: '#6366f1', amber: '#f59e0b', emerald: '#10b981', violet: '#8b5cf6', cyan: '#06b6d4', rose: '#f43f5e', slate: '#94a3b8' };
+        const manwon = (v) => v == null ? '-' : (v >= 10000 ? (Math.floor(v / 10000) + '억' + (v % 10000 ? ' ' + (v % 10000).toLocaleString('ko-KR') : '')) : v.toLocaleString('ko-KR') + '만') + '원';
 
-            // Chart 2: 서울 주택 매매거래량 회전율
-            new Chart(document.getElementById('chart2').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: ['평년 평균', '6월', '7월', '8월', '9월', '11월(현재)'],
-                    datasets: [{
-                        label: '거래량(천 건)',
-                        data: [4.1, 4.3, 4.0, 3.8, 3.7, 3.9],
-                        backgroundColor: '#6366f1'
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
-
-            // Chart 3: 수도권 매매 매물 적체량 곡선
-            new Chart(document.getElementById('chart3').getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels: ['연초', '3월', '6월', '9월', '11월'],
-                    datasets: [{
-                        label: '매물(만 건)',
-                        data: [5.7, 6.2, 6.8, 7.5, 8.2],
-                        borderColor: '#f59e0b',
-                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
-
-            // Chart 4: 수도권 입주물량 타임라인
-            new Chart(document.getElementById('chart4').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: ['올해 Q3', '올해 Q4', '내년 Q1', '내년 Q2'],
-                    datasets: [{
-                        label: '입주 물량(만 호)',
-                        data: [2.8, 3.5, 4.2, 3.1],
-                        backgroundColor: '#10b981'
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
-
-            // Chart 5: 주택담보대출 금리 추이
-            new Chart(document.getElementById('chart5').getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels: ['6월', '7월', '8월', '9월', '10월', '11월'],
-                    datasets: [{
-                        label: '금리(%)',
-                        data: [4.3, 4.2, 4.1, 4.0, 3.9, 3.85],
-                        borderColor: '#8b5cf6',
-                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
-
-            // Chart 6: 서울 vs 경기·인천 아파트 매매가 지수
-            new Chart(document.getElementById('chart6').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: ['서울 강남권', '서울 강북권', '경기 남부', '경기 북부', '인천'],
-                    datasets: [{
-                        label: '가격 지수',
-                        data: [128.5, 115.2, 108.4, 102.1, 99.8],
-                        backgroundColor: ['#3b82f6', '#60a5fa', '#10b981', '#34d399', '#f59e0b']
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
-
-            // Chart 7: 수도권 아파트 전세가율 변화
-            new Chart(document.getElementById('chart7').getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels: ['6월', '7월', '8월', '9월', '10월', '11월'],
-                    datasets: [{
-                        label: '전세가율(%)',
-                        data: [52.1, 52.4, 52.8, 53.1, 53.5, 53.9],
-                        borderColor: '#06b6d4',
-                        backgroundColor: 'rgba(6, 182, 212, 0.1)',
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
-
-            // Chart 8: 주택 인허가 및 착공 물량 회복세
-            new Chart(document.getElementById('chart8').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: ['전년 동기', 'Q1', 'Q2', 'Q3', '현재'],
-                    datasets: [{
-                        label: '인허가 지수',
-                        data: [100, 115, 128, 142, 150],
-                        backgroundColor: '#6366f1'
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
-        };
-
-        function resetCharts() {
-            alertAction('모든 차트 데이터가 최신 버전으로 갱신되었습니다.');
+        function setCard(i, title, sub, src) {
+            document.getElementById('ch' + i + '-title').textContent = i + '. ' + title;
+            document.getElementById('ch' + i + '-sub').textContent = sub || ' ';
+            document.getElementById('ch' + i + '-src').textContent = src || '';
         }
+        function cardMsg(i, msg) {
+            const m = document.getElementById('ch' + i + '-msg');
+            m.textContent = msg || '';
+            m.classList.toggle('hidden', !msg);
+            if (msg && liveCharts[i]) { liveCharts[i].destroy(); delete liveCharts[i]; }
+        }
+        function draw(i, config) {
+            if (liveCharts[i]) liveCharts[i].destroy();
+            config.options = Object.assign({ responsive: true, maintainAspectRatio: false }, config.options || {});
+            liveCharts[i] = new Chart(document.getElementById('chart' + i).getContext('2d'), config);
+            cardMsg(i, '');
+        }
+        const pctTick = { callback: (v) => v + '%' };
+
+        function renderLiveCharts(d) {
+            const L = d.monthLabels;
+            const last = L.length - 1;
+            const curNote = L[last] + '은 계약 후 30일 내 신고분만 반영(진행 중)';
+            const t = d.trades, cy = d.cheongyak;
+
+            if (t && t.ok) {
+                const prevIdx = last - 1;
+                // 1. 3.3㎡당 중위가 추이
+                setCard(1, '서울 아파트 3.3㎡당 중위 매매가 추이',
+                    L[prevIdx] + ' ' + manwon(t.ppSeries[prevIdx]) + (t.ppChange[prevIdx] != null ? ' · 전월 대비 ' + (t.ppChange[prevIdx] > 0 ? '+' : '') + t.ppChange[prevIdx] + '%' : '') + ' · 점선은 ' + curNote, SRC_RTMS);
+                draw(1, { type: 'line', data: { labels: L, datasets: [{ label: '3.3㎡당 중위가(만원)', data: t.ppSeries, borderColor: COLORS.blue, backgroundColor: 'rgba(59,130,246,0.1)', fill: true, tension: 0.3,
+                    segment: { borderDash: (c) => c.p1DataIndex === last ? [5, 5] : undefined } }] },
+                    options: { plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => manwon(c.parsed.y) + (t.ppChange[c.dataIndex] != null ? ' (전월 대비 ' + t.ppChange[c.dataIndex] + '%)' : '') } } } } });
+
+                // 2. 월별 거래량
+                setCard(2, '서울 아파트 월별 매매 거래량', L[prevIdx] + ' ' + t.volume[prevIdx].toLocaleString('ko-KR') + '건 · 연한 막대는 ' + curNote, SRC_RTMS);
+                draw(2, { type: 'bar', data: { labels: L, datasets: [{ label: '거래량(건)', data: t.volume, backgroundColor: L.map((_, i) => i === last ? 'rgba(99,102,241,0.35)' : COLORS.indigo) }] },
+                    options: { plugins: { legend: { display: false } } } });
+
+                // 3. 구별 거래량 (전월)
+                const topGu = t.guVolume.slice(0, 12);
+                setCard(3, '구별 매매 거래량 상위 12곳 (' + L[prevIdx] + ')', '서울 25개 구 중 ' + L[prevIdx] + ' 계약 기준 거래가 많은 순', SRC_RTMS);
+                draw(3, { type: 'bar', data: { labels: topGu.map((g) => g[0]), datasets: [{ label: '거래량(건)', data: topGu.map((g) => g[1]), backgroundColor: COLORS.amber }] },
+                    options: { indexAxis: 'y', plugins: { legend: { display: false } } } });
+
+                // 5. 가격대별 비중
+                const top2 = t.priceBands.slice(0, 2).reduce((s, b) => s + (b.share || 0), 0);
+                setCard(5, '가격대별 거래 비중 (' + L[prevIdx] + ')', '9억 이하 거래 ' + Math.round(top2 * 10) / 10 + '% · 대출 규제 구간별 분포', SRC_RTMS);
+                draw(5, { type: 'bar', data: { labels: t.priceBands.map((b) => b.label), datasets: [{ label: '비중(%)', data: t.priceBands.map((b) => b.share), backgroundColor: [COLORS.emerald, COLORS.cyan, COLORS.blue, COLORS.violet, COLORS.rose] }] },
+                    options: { scales: { y: { ticks: pctTick } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => c.parsed.y + '% (' + t.priceBands[c.dataIndex].count.toLocaleString('ko-KR') + '건)' } } } } });
+
+                // 6. 권역별 3.3㎡당 중위가 추이
+                const regColors = [COLORS.slate, COLORS.emerald, COLORS.amber, COLORS.cyan, COLORS.blue];
+                const gap = t.regions.map((r) => r.values[prevIdx] || 0);
+                setCard(6, '서울 권역별 3.3㎡당 중위가 추이', L[prevIdx] + ' 동남권은 동북권의 ' + (gap[1] ? (gap[4] / gap[1]).toFixed(1) : '-') + '배 · 점선은 ' + curNote, SRC_RTMS);
+                draw(6, { type: 'line', data: { labels: L, datasets: t.regions.map((r, i) => ({ label: r.name, data: r.values, borderColor: regColors[i], backgroundColor: regColors[i], tension: 0.3,
+                    segment: { borderDash: (c) => c.p1DataIndex === last ? [5, 5] : undefined } })) },
+                    options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } }, tooltip: { callbacks: { label: (c) => c.dataset.label + ' ' + manwon(c.parsed.y) } } } } });
+
+                // 7. 면적대별 비중
+                setCard(7, '전용면적대별 거래 비중 (' + L[prevIdx] + ')', '전용 85㎡ 이하 거래 ' + Math.round((t.areaBands[0].share + t.areaBands[1].share) * 10) / 10 + '% · ' + t.areaBands.reduce((s, b) => s + b.count, 0).toLocaleString('ko-KR') + '건 기준', SRC_RTMS);
+                draw(7, { type: 'doughnut', data: { labels: t.areaBands.map((b) => b.label), datasets: [{ data: t.areaBands.map((b) => b.share), backgroundColor: [COLORS.cyan, COLORS.blue, COLORS.indigo, COLORS.violet] }] },
+                    options: { plugins: { legend: { position: 'right', labels: { boxWidth: 10, font: { size: 11 } } }, tooltip: { callbacks: { label: (c) => c.label + ' ' + c.parsed + '% (' + t.areaBands[c.dataIndex].count.toLocaleString('ko-KR') + '건)' } } } } });
+
+                // 8. 직거래·법인 매수 비중
+                setCard(8, '직거래 · 개인 외 매수 비중 추이', '직거래는 증여·특수관계 거래 신호로 자주 쓰입니다 · ' + L[last] + '은 신고 진행 중', SRC_RTMS);
+                draw(8, { type: 'line', data: { labels: L, datasets: [
+                    { label: '직거래 비중', data: t.directShare, borderColor: COLORS.rose, backgroundColor: COLORS.rose, tension: 0.3 },
+                    { label: '법인 등 개인 외 매수 비중', data: t.corpShare, borderColor: COLORS.violet, backgroundColor: COLORS.violet, tension: 0.3 }] },
+                    options: { scales: { y: { ticks: pctTick } }, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } }, tooltip: { callbacks: { label: (c) => c.dataset.label + ' ' + c.parsed.y + '%' } } } } });
+            } else {
+                const err = (t && t.error) || '실거래가 데이터를 불러오지 못했습니다';
+                [1, 2, 3, 5, 6, 7, 8].forEach((i) => { setCard(i, ['', '서울 3.3㎡당 중위가 추이', '서울 월별 거래량', '구별 거래량', '', '가격대별 거래 비중', '권역별 3.3㎡당 중위가', '면적대별 거래 비중', '직거래·개인 외 매수 비중'][i], '', SRC_RTMS); cardMsg(i, err); });
+            }
+
+            // 4. 청약 공급 세대수
+            if (cy && cy.ok) {
+                const totals = L.map((_, i) => cy.regions.reduce((s, r) => s + r.values[i], 0));
+                const sum = totals.reduce((a, b) => a + b, 0);
+                setCard(4, '수도권 청약 공급 세대수 (월별 모집공고)', '최근 6개월 합계 ' + sum.toLocaleString('ko-KR') + '세대 · ' + L[last] + ' ' + totals[last].toLocaleString('ko-KR') + '세대', SRC_CY);
+                const cyColors = { 서울: COLORS.blue, 경기: COLORS.emerald, 인천: COLORS.amber };
+                draw(4, { type: 'bar', data: { labels: L, datasets: cy.regions.map((r) => ({ label: r.name, data: r.values, backgroundColor: cyColors[r.name] })) },
+                    options: { scales: { x: { stacked: true }, y: { stacked: true } }, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } }, tooltip: { callbacks: { label: (c) => c.dataset.label + ' ' + c.parsed.y.toLocaleString('ko-KR') + '세대' } } } } });
+            } else {
+                setCard(4, '수도권 청약 공급 세대수', '', SRC_CY);
+                cardMsg(4, (cy && cy.error) || '청약홈 데이터를 불러오지 못했습니다');
+            }
+        }
+
+        async function loadCharts(manual) {
+            const status = document.getElementById('charts-status');
+            if (manual) status.textContent = '최신 데이터를 확인하는 중…';
+            try {
+                const r = await fetch('/api/charts', { cache: manual ? 'no-store' : 'default' });
+                const d = await r.json();
+                if (!d.keyConfigured) {
+                    status.textContent = '공공데이터포털 인증키(DATA_GO_KR_KEY)가 설정되지 않아 차트를 표시할 수 없습니다.';
+                    for (let i = 1; i <= 8; i++) cardMsg(i, '인증키 설정 후 표시됩니다.');
+                    return;
+                }
+                renderLiveCharts(d);
+                const t = d.trades;
+                status.textContent = '데이터 기준 ' + new Date(d.updatedAt).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) +
+                    ' · 최근 6개월(' + d.monthLabels[0] + '~' + d.monthLabels[d.monthLabels.length - 1] + ') · 6시간마다 갱신' +
+                    (t && t.ok && t.failedCalls ? ' · 일부 구 조회 실패 ' + t.failedCalls + '/' + t.totalCalls + '건' : '');
+                if (manual) alertAction('차트 데이터를 새로 불러왔습니다.');
+            } catch (e) {
+                status.textContent = '차트 데이터를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.';
+                for (let i = 1; i <= 8; i++) if (!liveCharts[i]) cardMsg(i, '불러오지 못했습니다.');
+            }
+        }
+
+        function resetCharts() { loadCharts(true); }
+
+        document.addEventListener('DOMContentLoaded', () => loadCharts(false));
+
 
         // ===== 실시간 뉴스 (Vercel /api/news) =====
         const liveNews = { items: [], filter: 'all' };
