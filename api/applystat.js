@@ -9,7 +9,18 @@ const METRO = ['서울', '경기', '인천'];
 const MONTHS = 12;
 const keyParam = (k) => (/%[0-9A-Fa-f]{2}/.test(k) ? k : encodeURIComponent(k));
 
-async function op(key, name) {
+async function op(key, name, attempt = 0) {
+  try { return await opOnce(key, name); }
+  catch (e) {
+    if (attempt < 3 && /429|LIMITED|abort|5\d\d/i.test(String(e && e.message || e) + (e && e.name))) {
+      await new Promise((r) => setTimeout(r, 1000 * 2 ** attempt));
+      return op(key, name, attempt + 1);
+    }
+    throw e;
+  }
+}
+
+async function opOnce(key, name) {
   const url = `https://api.odcloud.kr/api/ApplyhomeStatSvc/v1/${name}?page=1&perPage=2000&serviceKey=${keyParam(key)}`;
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), 12000);

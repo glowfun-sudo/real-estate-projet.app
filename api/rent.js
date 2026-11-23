@@ -39,11 +39,28 @@ async function fetchText(url, ms = 10000) {
   } finally { clearTimeout(t); }
 }
 
+async function fetchRetry(url, ms) {
+  // 공공데이터포털 순간 호출 제한(429/LIMITED_NUMBER_OF_SERVICE_REQUESTS)·타임아웃이면 1s→2s→4s 쉬고 재시도
+  let last;
+  for (let i = 0; i < 4; i++) {
+    try {
+      const text = await fetchText(url, ms);
+      if (/LIMITED_NUMBER_OF_SERVICE_REQUESTS/.test(text)) throw new Error('LIMITED_NUMBER_OF_SERVICE_REQUESTS');
+      return text;
+    } catch (e) {
+      last = e;
+      const transient = /429|LIMITED_NUMBER|abort|timeout|ECONNRESET|5\d\d/i.test(String(e && e.message || e) + (e && e.name));
+      if (!transient || i === 3) throw e;
+      await new Promise((r) => setTimeout(r, 1000 * 2 ** i));
+    }
+  }
+  throw last;
+}
+
 async function page(key, lawd, month, no) {
   const url = 'https://apis.data.go.kr/1613000/RTMSDataSvcAptRent/getRTMSDataSvcAptRent' +
     `?serviceKey=${keyParam(key)}&LAWD_CD=${lawd}&DEAL_YMD=${month}&pageNo=${no}&numOfRows=${PAGE}`;
-  let xml;
-  try { xml = await fetchText(url); } catch (e) { await new Promise((r) => setTimeout(r, 800)); xml = await fetchText(url); }
+  const xml = await fetchRetry(url);
   const code = tag(xml, 'resultCode');
   if (code && !['000', '00'].includes(code)) throw new Error(`${code} ${tag(xml, 'resultMsg')}`);
   const rows = (xml.match(/<item>[\s\S]*?<\/item>/g) || []).map((it) => ({
@@ -82,8 +99,8 @@ module.exports = async (req, res) => {
     const counts = Object.fromEntries(months.map((m) => [m, { total: 0, wolse: 0 }]));
     let failed = 0;
 
-    for (let i = 0; i < tasks.length; i += 8) {
-      const batch = tasks.slice(i, i + 8);
+    for (let i = 0; i < tasks.length; i += 5) {
+      const batch = tasks.slice(i, i + 5);
       const res2 = await Promise.allSettled(batch.map((t) => rentsFor(key, t.code, t.m).then((rows) => ({ ...t, rows }))));
       for (const r of res2) {
         if (r.status !== 'fulfilled') { failed++; continue; }

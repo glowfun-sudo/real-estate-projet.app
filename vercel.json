@@ -1,6 +1,7 @@
 {
   "functions": {
-    "api/charts.js": { "maxDuration": 60 },
-    "api/rent.js": { "maxDuration": 60 }
+    "api/charts.js": { "maxDuration": 120 },
+    "api/rent.js": { "maxDuration": 120 },
+    "api/public.js": { "maxDuration": 60 }
   }
 }

@@ -309,6 +309,7 @@
             });
 
             document.getElementById('tab-' + tabId).classList.remove('hidden');
+            if (tabId === 'public' && typeof startPublicData === 'function') startPublicData();
             const activeBtn = document.getElementById('tab-btn-' + tabId);
             activeBtn.classList.remove('border-transparent', 'text-slate-400');
             activeBtn.classList.add('border-blue-500', 'text-white');
@@ -377,7 +378,6 @@
                 msg.textContent = '청약 통계를 불러오지 못했습니다.'; sub.textContent = '';
             }
         }
-        document.addEventListener('DOMContentLoaded', () => loadApplyStat());
 
         // ===== 시장 차트 8선 (Vercel /api/charts, 실시간 공공데이터) =====
         const liveCharts = {};
@@ -516,11 +516,12 @@
                     return;
                 }
                 renderLiveCharts(d);
-                loadJeonse(d, manual);
+                const jeonseDone = loadJeonse(d, manual);
                 const t = d.trades;
                 status.textContent = '데이터 기준 ' + new Date(d.updatedAt).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) +
                     ' · 최근 6개월(' + d.monthLabels[0] + '~' + d.monthLabels[d.monthLabels.length - 1] + ') · 6시간마다 갱신' +
                     (t && t.ok && t.failedCalls ? ' · 일부 구 조회 실패 ' + t.failedCalls + '/' + t.totalCalls + '건' : '');
+                await jeonseDone;
                 if (manual) alertAction('차트 데이터를 새로 불러왔습니다.');
             } catch (e) {
                 status.textContent = '차트 데이터를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.';
@@ -530,7 +531,7 @@
 
         function resetCharts() { loadCharts(true); }
 
-        document.addEventListener('DOMContentLoaded', () => loadCharts(false));
+        document.addEventListener('DOMContentLoaded', () => { loadCharts(false).finally(startPublicData); });
 
 
         // ===== 실시간 뉴스 (Vercel /api/news) =====
@@ -749,10 +750,15 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        // 공공데이터 탭은 시장 차트를 다 받은 뒤(또는 탭을 처음 열 때) 불러옴 — 공공데이터포털 순간 호출 제한 방지
+        let publicStarted = false;
+        function startPublicData() {
+            if (publicStarted) return;
+            publicStarted = true;
             loadPublicData(false);
+            loadApplyStat();
             setInterval(() => loadPublicData(false), 30 * 60 * 1000);
-        });
+        }
     </script>
 </body>
 </html>

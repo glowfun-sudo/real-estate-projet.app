@@ -64,15 +64,28 @@ async function fetchText(url, ms = 9000) {
   } finally { clearTimeout(t); }
 }
 
+async function fetchRetry(url, ms) {
+  // 공공데이터포털 순간 호출 제한(429/LIMITED_NUMBER_OF_SERVICE_REQUESTS)·타임아웃이면 1s→2s→4s 쉬고 재시도
+  let last;
+  for (let i = 0; i < 4; i++) {
+    try {
+      const text = await fetchText(url, ms);
+      if (/LIMITED_NUMBER_OF_SERVICE_REQUESTS/.test(text)) throw new Error('LIMITED_NUMBER_OF_SERVICE_REQUESTS');
+      return text;
+    } catch (e) {
+      last = e;
+      const transient = /429|LIMITED_NUMBER|abort|timeout|ECONNRESET|5\d\d/i.test(String(e && e.message || e) + (e && e.name));
+      if (!transient || i === 3) throw e;
+      await new Promise((r) => setTimeout(r, 1000 * 2 ** i));
+    }
+  }
+  throw last;
+}
+
 async function trades(key, lawd, month) {
   const url = 'https://apis.data.go.kr/1613000/RTMSDataSvcAptTradeDev/getRTMSDataSvcAptTradeDev' +
     `?serviceKey=${keyParam(key)}&LAWD_CD=${lawd}&DEAL_YMD=${month}&pageNo=1&numOfRows=2000`;
-  let xml;
-  try { xml = await fetchText(url); } catch (e) {
-    // 한 번 재시도 (일시적 429·타임아웃)
-    await new Promise((r) => setTimeout(r, 800));
-    xml = await fetchText(url);
-  }
+  const xml = await fetchRetry(url);
   const code = tag(xml, 'resultCode');
   if (code && !['000', '00'].includes(code)) throw new Error(`${code} ${tag(xml, 'resultMsg')}`);
   return (xml.match(/<item>[\s\S]*?<\/item>/g) || []).map((it) => ({
@@ -94,8 +107,8 @@ async function seoulTrades(key, months) {
 
   const results = [];
   let failed = 0;
-  for (let i = 0; i < tasks.length; i += 6) {
-    const batch = tasks.slice(i, i + 6);
+  for (let i = 0; i < tasks.length; i += 4) {
+    const batch = tasks.slice(i, i + 4);
     const res = await Promise.allSettled(batch.map((t) => trades(key, t.code, t.m).then((rows) => ({ ...t, rows }))));
     res.forEach((r) => (r.status === 'fulfilled' ? results.push(r.value) : failed++));
   }
@@ -154,7 +167,7 @@ async function cheongyakSupply(key, months) {
   const first = `${months[0].slice(0, 4)}-${months[0].slice(4)}-01`;
   const url = 'https://api.odcloud.kr/api/ApplyhomeInfoDetailSvc/v1/getAPTLttotPblancDetail' +
     `?page=1&perPage=1000&serviceKey=${keyParam(key)}&${encodeURIComponent('cond[RCRIT_PBLANC_DE::GTE]')}=${first}`;
-  const json = JSON.parse(await fetchText(url));
+  const json = JSON.parse(await fetchRetry(url));
   if (!Array.isArray(json.data)) throw new Error(friendlyError(json.msg || json.message || '응답 형식 오류'));
   const series = { 서울: {}, 경기: {}, 인천: {} };
   const counts = { 서울: 0, 경기: 0, 인천: 0 };
@@ -190,8 +203,8 @@ module.exports = async (req, res) => {
     wrap(cheongyakSupply(key, months)),
   ]);
 
-  // 엣지 캐시 6시간: 25개 구 × 6개월 = 150회 호출이라 자주 새로 받지 않음
-  res.setHeader('Cache-Control', 's-maxage=21600, stale-while-revalidate=86400');
+  // 엣지 캐시 6시간: 25개 구 × 6개월 = 150회 호출이라 자주 새로 받지 않음. 실패한 결과는 1분만 저장
+  res.setHeader('Cache-Control', rt.ok && cy.ok ? 's-maxage=21600, stale-while-revalidate=86400' : 's-maxage=60');
   res.status(200).send(JSON.stringify({
     keyConfigured: true,
     updatedAt: new Date().toISOString(),

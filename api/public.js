@@ -54,13 +54,31 @@ function ymd(d) { return d.toISOString().slice(0, 10); }
 // 디코딩 키(일반 문자열)든 인코딩 키(%2B 등 포함)든 받아들임
 function keyParam(key) { return /%[0-9A-Fa-f]{2}/.test(key) ? key : encodeURIComponent(key); }
 
+async function fetchRetry(url, ms) {
+  // 공공데이터포털 순간 호출 제한(429/LIMITED_NUMBER_OF_SERVICE_REQUESTS)·타임아웃이면 1s→2s→4s 쉬고 재시도
+  let last;
+  for (let i = 0; i < 4; i++) {
+    try {
+      const text = await fetchText(url, ms);
+      if (/LIMITED_NUMBER_OF_SERVICE_REQUESTS/.test(text)) throw new Error('LIMITED_NUMBER_OF_SERVICE_REQUESTS');
+      return text;
+    } catch (e) {
+      last = e;
+      const transient = /429|LIMITED_NUMBER|abort|timeout|ECONNRESET|5\d\d/i.test(String(e && e.message || e) + (e && e.name));
+      if (!transient || i === 3) throw e;
+      await new Promise((r) => setTimeout(r, 1000 * 2 ** i));
+    }
+  }
+  throw last;
+}
+
 // ---------- 1) 청약홈 분양정보 ----------
 async function cheongyak(key) {
   const since = new Date(kstNow().getTime() - 45 * 86400000);
   const base = 'https://api.odcloud.kr/api/ApplyhomeInfoDetailSvc/v1/getAPTLttotPblancDetail';
   const url = `${base}?page=1&perPage=300&serviceKey=${keyParam(key)}` +
     `&${encodeURIComponent('cond[RCRIT_PBLANC_DE::GTE]')}=${ymd(since)}`;
-  const json = JSON.parse(await fetchText(url));
+  const json = JSON.parse(await fetchRetry(url));
   if (!Array.isArray(json.data)) throw new Error(json.msg || json.message || '응답 형식 오류');
   const today = ymd(kstNow());
   const items = json.data
@@ -109,7 +127,7 @@ function friendlyError(msg = '') {
 async function tradesFor(key, lawd, month) {
   const url = 'https://apis.data.go.kr/1613000/RTMSDataSvcAptTradeDev/getRTMSDataSvcAptTradeDev' +
     `?serviceKey=${keyParam(key)}&LAWD_CD=${lawd}&DEAL_YMD=${month}&pageNo=1&numOfRows=1000`;
-  return parseTrades(await fetchText(url));
+  return parseTrades(await fetchRetry(url));
 }
 
 async function realTrades(key) {
@@ -232,7 +250,8 @@ module.exports = async (req, res) => {
 
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
   // 엣지 캐시 30분 (공공데이터포털 일일 호출 한도 보호)
-  res.setHeader('Cache-Control', 's-maxage=1800, stale-while-revalidate=7200');
+  const allOk = !keyConfigured || (cy.ok && rt.ok);
+  res.setHeader('Cache-Control', allOk ? 's-maxage=1800, stale-while-revalidate=7200' : 's-maxage=60');
   res.status(200).send(JSON.stringify({
     updatedAt: new Date().toISOString(),
     keyConfigured,
