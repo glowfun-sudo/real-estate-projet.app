@@ -48,7 +48,7 @@
                     <i class="fa-solid fa-chart-line"></i> 시장 차트 8선
                 </button>
                 <button onclick="switchTab('news')" id="tab-btn-news" class="tab-btn py-3 px-4 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap transition">
-                    <i class="fa-solid fa-newspaper"></i> 분야별 뉴스 & 해석
+                    <i class="fa-solid fa-newspaper"></i> 분야별 뉴스
                 </button>
                 <button onclick="switchTab('public')" id="tab-btn-public" class="tab-btn py-3 px-4 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap transition">
                     <i class="fa-solid fa-landmark"></i> 공공데이터 연동
@@ -149,11 +149,11 @@
             </div>
         </section>
 
-        <!-- TAB 3: Sector News & Interpretation -->
+        <!-- TAB 2: Sector News (live) -->
         <section id="tab-news" class="tab-content hidden space-y-6">
             <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                <h2 class="text-lg font-bold text-slate-800">분야별 핵심 뉴스 브리핑 & 오늘의 해석</h2>
-                <p class="text-xs text-slate-500">수도권 주택시장의 구조적 변화 배경과 언론 보도 원문 요약</p>
+                <h2 class="text-lg font-bold text-slate-800">분야별 핵심 뉴스 브리핑</h2>
+                <p class="text-xs text-slate-500">한국부동산원·주요 언론의 최근 7일 수도권 부동산 뉴스를 실시간으로 모아 보여줍니다</p>
             </div>
 
             <!-- Live News Feed -->
@@ -172,89 +172,6 @@
                 <div id="live-news-filters" class="flex flex-wrap gap-2"></div>
                 <ul id="live-news-list" class="divide-y divide-slate-100"></ul>
                 <p class="text-[11px] text-slate-400">출처: Google 뉴스 RSS(한국부동산원·주요 언론 검색)<span id="live-news-naver"></span> · 10분마다 자동 갱신 · 제목을 누르면 원문 기사로 이동합니다.</p>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- News Column -->
-                <div class="lg:col-span-2 space-y-4">
-                    <!-- News Item 1 -->
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:border-blue-300 transition">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-bold px-2.5 py-1 bg-blue-50 text-blue-600 rounded-md">주거용 부동산 시장</span>
-                            <span class="text-xs text-slate-400">국민일보 / 뉴스1</span>
-                        </div>
-                        <h3 class="text-base font-bold text-slate-900 mb-2">서울 매물 증가 속 공급 기반 확대, 수도권 입주 물량 대기</h3>
-                        <p class="text-sm text-slate-600 mb-4 leading-relaxed">
-                            서울 주택시장은 가격 상승세가 둔화되고 매물이 8만 건을 돌파하는 등 안정화 지표가 확산되는 한편, 인허가(전년 동기 대비 +33%)와 착공(+36%)이 늘어 공급 기반이 확대되고 있습니다. 특히 내년 1분기까지 수도권에 4만 호 이상의 입주가 예정되어 있어 단기적으로 전세 및 매매 시장의 가격 경쟁력이 중요한 변수로 작용할 전망입니다.
-                        </p>
-                        <div class="flex items-center justify-between pt-3 border-t border-slate-100 text-xs">
-                            <span class="text-slate-500 font-medium">키워드: 인허가증가, 입주물량스파이크, 가격경쟁</span>
-                            <button onclick="openNewsModal('주거용 부동산 시장 리포트 전문')" class="text-blue-600 hover:underline font-semibold flex items-center gap-1">
-                                원문 및 상세 보기 <i class="fa-solid fa-arrow-right"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- News Item 2 -->
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:border-blue-300 transition">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-bold px-2.5 py-1 bg-purple-50 text-purple-600 rounded-md">가계 금융 및 대출</span>
-                            <span class="text-xs text-slate-400">금융위원회 / 연합인포맥스</span>
-                        </div>
-                        <h3 class="text-base font-bold text-slate-900 mb-2">스트레스 DSR 2단계 적용 속 주택대출 증가세 안정화</h3>
-                        <p class="text-sm text-slate-600 mb-4 leading-relaxed">
-                            금융당국과 시중은행의 가계부채 관리 강화 기조에 따라 주택담보대출 증가 속도가 안정세를 보이고 있습니다. 금리 인하 기대감과 맞물려 실수요자들은 매수 타이밍을 저울질하고 있으며, 은행권 혼합형 금리는 연 3%대 후반에서 형성되어 차주들의 이자 부담 완화 여부에 관심이 모아지고 있습니다.
-                        </p>
-                        <div class="flex items-center justify-between pt-3 border-t border-slate-100 text-xs">
-                            <span class="text-slate-500 font-medium">키워드: 스트레스DSR, 주택대출, 금리안정세</span>
-                            <button onclick="openNewsModal('가계 금융 및 대출 리포트 전문')" class="text-blue-600 hover:underline font-semibold flex items-center gap-1">
-                                원문 및 상세 보기 <i class="fa-solid fa-arrow-right"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- News Item 3 -->
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:border-blue-300 transition">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-bold px-2.5 py-1 bg-emerald-50 text-emerald-600 rounded-md">전월세 및 주거 공급</span>
-                            <span class="text-xs text-slate-400">국토교통부 / 한국부동산원</span>
-                        </div>
-                        <h3 class="text-base font-bold text-slate-900 mb-2">수도권 역세권 전세가격 상승세, 실수요 중심 임대차 시장 재편</h3>
-                        <p class="text-sm text-slate-600 mb-4 leading-relaxed">
-                            수도권 아파트 전세시장은 교통 호재가 집중된 역세권 및 신축 단지를 중심으로 상승세가 이어지고 있습니다. 매매 시장 관망세가 짙어지면서 전세 수요가 꾸준히 유입되는 양상이며, 향후 입주 물량 증가 지역의 수급 변화에 따라 국지적 전세가 변동성이 나타날 것으로 예상됩니다.
-                        </p>
-                        <div class="flex items-center justify-between pt-3 border-t border-slate-100 text-xs">
-                            <span class="text-slate-500 font-medium">키워드: 역세권전세, 임대차시장, 실수요유입</span>
-                            <button onclick="openNewsModal('전월세 및 주거 공급 리포트 전문')" class="text-blue-600 hover:underline font-semibold flex items-center gap-1">
-                                원문 및 상세 보기 <i class="fa-solid fa-arrow-right"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Today's Interpretation Highlight Column -->
-                <div class="space-y-6">
-                    <div class="bg-gradient-to-br from-slate-900 to-blue-950 text-white p-6 rounded-2xl shadow-md border border-slate-800">
-                        <div class="flex items-center space-x-2 text-amber-400 mb-3">
-                            <i class="fa-solid fa-bolt-lightning text-lg"></i>
-                            <h3 class="font-bold text-base uppercase tracking-wider">오늘의 해석</h3>
-                        </div>
-                        <h4 class="font-bold text-lg mb-3 leading-snug">"매물 증가와 입주 스파이크 속 가격 민감도 극대화 국면"</h4>
-                        <p class="text-slate-300 text-sm leading-relaxed mb-4">
-                            수도권 매물이 8만 건을 돌파하고 내년 1분기까지 입주 물량이 집중되면서 시장은 전형적인 <b>'매수자 우위 및 관망세'</b>를 보이고 있습니다. 실수요자들은 입지별·단지별 가격 적정성을 꼼꼼히 따져보는 핀포인트 접근이 필요합니다.
-                        </p>
-                        <div class="bg-white/10 p-4 rounded-xl border border-white/10 text-xs text-slate-200 space-y-2">
-                            <div class="flex items-center gap-2">
-                                <i class="fa-solid fa-check text-emerald-400"></i>
-                                <span>금리 안정화 추이에 따른 대출 상환 계획 점검</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <i class="fa-solid fa-check text-emerald-400"></i>
-                                <span>인근 지역 입주 물량 공백기 및 시세 비교 필수</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </section>
 
@@ -345,30 +262,6 @@
         <p>&copy; 2026 주간 수도권 아파트 시장. All rights reserved. | Weekly Market Briefing System</p>
     </footer>
 
-    <!-- News Modal -->
-    <div id="news-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 space-y-4">
-            <div class="flex justify-between items-start">
-                <div>
-                    <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 bg-emerald-50 text-emerald-600 rounded-md">리포트 원문 요약</span>
-                    <h3 id="news-modal-title" class="text-lg font-bold text-slate-900 mt-2">상세 브리핑 내용</h3>
-                </div>
-                <button onclick="closeNewsModal()" class="text-slate-400 hover:text-slate-600 p-1">
-                    <i class="fa-solid fa-xmark text-xl"></i>
-                </button>
-            </div>
-            <div class="text-sm text-slate-600 leading-relaxed space-y-2">
-                <p>본 브리핑은 국토교통부, 한국부동산원, 금융위원회 및 민간 시장 데이터(2026년 11월 기준)를 바탕으로 작성되었습니다.</p>
-                <p class="font-medium text-slate-800">• 수도권 아파트 시장 주요 지표 및 실거래가 동향 검증 완료</p>
-            </div>
-            <div class="pt-4 border-t border-slate-100 flex justify-end">
-                <button onclick="closeNewsModal()" class="bg-slate-900 text-white text-sm px-4 py-2 rounded-lg font-medium hover:bg-slate-800 transition">
-                    닫기
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- Export Modal -->
     <div id="export-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 space-y-4">
@@ -419,15 +312,6 @@
             const activeBtn = document.getElementById('tab-btn-' + tabId);
             activeBtn.classList.remove('border-transparent', 'text-slate-400');
             activeBtn.classList.add('border-blue-500', 'text-white');
-        }
-
-        function openNewsModal(title) {
-            document.getElementById('news-modal-title').innerText = title;
-            document.getElementById('news-modal').classList.remove('hidden');
-        }
-
-        function closeNewsModal() {
-            document.getElementById('news-modal').classList.add('hidden');
         }
 
         function openExportModal() {
